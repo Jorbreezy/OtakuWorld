@@ -1,5 +1,6 @@
 const express = require('express');
 const path = require('path');
+const user = require('./routers/user');
 require('dotenv').config();
 
 const app = express();
@@ -13,6 +14,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Route handlers
+app.use('/auth', user);
 
 // Main Get Request, Send html file
 app.get('/', (req, res) => res.sendFile(path.resolve(__dirname, '../client/index.html')));
