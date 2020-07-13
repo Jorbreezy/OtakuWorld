@@ -4,6 +4,7 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
 const user = require('./routers/user.js');
+const manga = require('./routers/manga.js');
 
 const app = express();
 const { PORT } = process.env;
@@ -19,6 +20,7 @@ app.use(cors());
 
 // Route handlers
 app.use('/auth', user);
+app.use('/manga', manga);
 
 // Main Get Request, Send html file
 app.get('/', (req, res) => res.sendFile(path.resolve(__dirname, '../client/index.html')));

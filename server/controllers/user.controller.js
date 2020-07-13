@@ -18,7 +18,10 @@ const userController = {
       return bcrypt.compare(password, data.rows[0].password).then(async (result) => {
         if (!result) return res.status(401).json({ error: 'Invalid Username or password' });
 
-        const token = jwt.sign({ user: username }, process.env.SECRET);
+        const user = data.rows[0];
+
+        // eslint-disable-next-line no-underscore-dangle
+        const token = jwt.sign({ _id: user._id }, process.env.SECRET);
         res.cookie('token', token, { httpOnly: true });
 
         return next();
@@ -49,12 +52,15 @@ const userController = {
         const queryStr = 'INSERT INTO users (username, password) VALUES($1, $2)';
 
         // stores username and hashed password in table in database
-        return db.query(queryStr, queryArr2, (qerr) => {
+        return db.query(queryStr, queryArr2, (qerr, uData) => {
           if (qerr) {
             return res.status(400).json({ message: 'Error occured in register' });
           }
 
-          const token = jwt.sign({ user: username }, process.env.SECRET);
+          const user = uData.rows[0];
+
+          // eslint-disable-next-line no-underscore-dangle
+          const token = jwt.sign({ _id: user._id }, process.env.SECRET);
           res.cookie('token', token, { httpOnly: true });
 
           return next();
