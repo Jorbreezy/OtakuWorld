@@ -1,12 +1,12 @@
 const db = require('../db/db');
 
 const mangaController = {
-  getAll: (req, res, next) => {
+  getAllByUser: (req, res, next) => {
     const query = 'Select * from manga WHERE user_id=$1';
     const { user } = res.locals;
 
     // eslint-disable-next-line no-underscore-dangle
-    db.query(query, [user._id], (err, data) => {
+    db.query(query, [user.id], (err, data) => {
       if (err) return next(err);
 
       res.locals.manga = data.rows;
@@ -28,9 +28,20 @@ const mangaController = {
     } = req.body;
 
     // eslint-disable-next-line no-underscore-dangle
-    const qarr = [title, description, chapters, author, type, status, thumbnail, user._id];
+    const qarr = [title, description, chapters, author, type, status, thumbnail, user.id];
     db.query(query, qarr, (err) => {
       if (err) return next(err);
+
+      return next();
+    });
+  },
+  getAll: (req, res, next) => {
+    const query = 'SELECT * FROM manga';
+
+    db.query(query, (err, data) => {
+      if (err) return next(err);
+
+      res.locals.allManga = data.rows;
 
       return next();
     });

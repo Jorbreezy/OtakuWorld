@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { useHistory } from 'react-router-dom';
+import Auth from './Auth';
 
 const Login = () => {
   const [state, setState] = useState({
@@ -6,6 +8,8 @@ const Login = () => {
     password: '',
     warning: '',
   });
+
+  const history = useHistory();
 
   const handleChange = (e) => {
     setState({ ...state, [e.target.id]: e.target.value });
@@ -20,17 +24,19 @@ const Login = () => {
       body: JSON.stringify({ username, password }),
     })
       .then((res) => {
-        if (res.status === 401) {
-          setState({
-            warning: 'Invalid Username or Password',
-          });
-        } else if (res.status === 406) {
-          setState({
-            warning: 'User not found try again',
-          });
+        if (res.status !== 200) {
+          setState({ warning: res.message });
+        } else {
+          Auth.login(() => {
+            history.push('/dashboard');
+          }, username);
         }
       })
       .catch((err) => console.log(err));
+  };
+
+  const register = () => {
+    history.push('/register');
   };
 
   return (
@@ -49,6 +55,7 @@ const Login = () => {
         <p>{ state.warning }</p>
 
         <button type="button" onClick={handleClick}>Login</button>
+        <button type="button" onClick={register}>Register</button>
       </div>
     </div>
   );

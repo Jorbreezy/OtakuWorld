@@ -21,7 +21,7 @@ const userController = {
         const user = data.rows[0];
 
         // eslint-disable-next-line no-underscore-dangle
-        const token = jwt.sign({ _id: user._id }, process.env.SECRET);
+        const token = jwt.sign({ id: user._id }, process.env.SECRET);
         res.cookie('token', token, { httpOnly: true });
 
         return next();
@@ -52,21 +52,28 @@ const userController = {
         const queryStr = 'INSERT INTO users (username, password) VALUES($1, $2)';
 
         // stores username and hashed password in table in database
-        return db.query(queryStr, queryArr2, (qerr, uData) => {
+        return db.query(queryStr, queryArr2, (qerr) => {
           if (qerr) {
             return res.status(400).json({ message: 'Error occured in register' });
           }
 
-          const user = uData.rows[0];
-
           // eslint-disable-next-line no-underscore-dangle
-          const token = jwt.sign({ _id: user._id }, process.env.SECRET);
-          res.cookie('token', token, { httpOnly: true });
+          // const token = jwt.sign({ id: user._id }, process.env.SECRET);
+          // res.cookie('token', token, { httpOnly: true });
 
           return next();
         });
       });
     });
+  },
+  signOut: (req, res, next) => {
+    try {
+      res.clearCookie('token');
+
+      return next();
+    } catch (err) {
+      return next(err);
+    }
   },
 };
 
