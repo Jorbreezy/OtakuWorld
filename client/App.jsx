@@ -5,6 +5,8 @@ import {
   Route,
 } from 'react-router-dom';
 
+import './styles/style.css';
+
 import Login from './components/Authentication/Login';
 import Register from './components/Authentication/Register';
 import Dashboard from './components/Dashboard/Dash';
@@ -19,7 +21,7 @@ class App extends PureComponent {
             <Route exact path="/login" component={Login} />
             <Route exact path="/register" component={Register} />
 
-            <PrivateRoute exact path={['/dashboard', '/']} component={Dashboard} />
+            <PrivateRoute exact path={['/discover', '/']} component={Dashboard} />
           </Switch>
         </Router>
       </div>

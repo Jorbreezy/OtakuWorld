@@ -28,7 +28,7 @@ const Login = () => {
           setState({ warning: res.message });
         } else {
           Auth.login(() => {
-            history.push('/dashboard');
+            history.push('/discover');
           }, username);
         }
       })

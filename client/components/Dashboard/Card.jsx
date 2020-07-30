@@ -2,9 +2,13 @@ import React from 'react';
 import { PropTypes } from 'prop-types';
 
 const Card = ({ thumbnail, title }) => (
-  <div>
-    <img className="img" src={thumbnail} alt="itemImage" />
-    <h3>{ title }</h3>
+  <div className="item">
+    <div className="cardImg">
+      <img className="img" src={thumbnail} alt="ItemImage" />
+    </div>
+    <div className="cardTitle">
+      <h3>{ title }</h3>
+    </div>
   </div>
 );
 

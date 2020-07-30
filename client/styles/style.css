@@ -1,0 +1,87 @@
+
+/* ------- NAV CONTAINER/ITEMS OPEN ------ */
+ul li {
+  display: inline;
+  margin: 5px;
+}
+
+#header {
+  display: flex;
+  width: 100%;
+  border-bottom: 1px solid;  
+  flex-wrap: wrap; 
+}
+
+.navItem {
+  margin: auto;
+  text-align: center;
+  padding: 0.5rem;
+  height: inherit;
+}
+
+.navItem:nth-of-type(1){
+  flex-grow: 1;
+}
+
+.navItem:nth-of-type(3){
+  flex-grow: 1;
+}
+
+.navItem:nth-of-type(2){
+  flex-grow: 2;
+  text-align: center;
+}
+
+.search {
+  width: 95%;
+  padding: 6px;
+  margin-top: 8px;
+  margin-right: 16px;
+  font-size: 17px;
+  border-radius: 4px;
+  outline: none;
+}
+
+/*  ---------NAV CONTAINER/ITEMS CLOSE ------- */ 
+
+/*  ---------ITEM CONTAINER/ITEMS OPEN ------- */
+
+.itemContainer {
+  margin: 10px;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.item {
+  display: flex;
+  flex-direction: column;
+  margin: 10px;
+  border-radius: 12px;
+  min-height: 18rem;
+  width: 12rem;
+  justify-content: center;
+  -moz-box-shadow:    3px 3px 5px 4px #ccc;
+  -webkit-box-shadow: 3px 3px 5px 4px #ccc;
+  box-shadow:         3px 3px 5px 4px #ccc;
+  overflow: hidden;
+}
+
+.image {
+  width: 200px;
+  height: 300px
+}
+
+.cardTitle {
+  border-top: 1px solid;
+  width: 100%;
+  text-align: center;
+}
+
+.cardImg {
+  max-height: 30rem;
+  flex-grow: 2;
+  text-align: center;
+  align-items: center;
+}
+
+/*  ---------ITEM CONTAINER/ITEMS CLOSE ------- */

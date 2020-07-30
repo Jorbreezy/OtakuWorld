@@ -11,9 +11,9 @@ module.exports = (env) => ({
     hot: true,
     publicPath: '/',
     inline: true,
-    // headers: { "Access-Control-Allow-Origin": "*" },
+    headers: { 'Access-Control-Allow-Origin': '*' },
     proxy: {
-      '/(api|auth|assets|dist)/**': {
+      '/(api|auth|assets|dist|manga)/**': {
         target: 'http://localhost:3000/',
         secure: false,
       },
