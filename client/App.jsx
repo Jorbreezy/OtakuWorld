@@ -6,6 +6,7 @@ import {
 } from 'react-router-dom';
 
 import './styles/style.css';
+import './styles/form.css';
 
 import Login from './components/Authentication/Login';
 import Register from './components/Authentication/Register';

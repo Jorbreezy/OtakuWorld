@@ -9,6 +9,7 @@ import {
 
 import List from '../Dashboard/List';
 import Reading from '../Dashboard/Manga/UsersManga';
+import Form from '../Dashboard/Add/Form';
 
 const Nav = () => (
   <Router>
@@ -47,6 +48,7 @@ const Nav = () => (
     <Switch>
       <Route exact path="/discover" component={List} />
       <Route exact path="/currentlyReading" component={Reading} />
+      <Route exact path="/add" component={Form} />
     </Switch>
 
   </Router>
