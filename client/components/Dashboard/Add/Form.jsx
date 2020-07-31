@@ -7,52 +7,107 @@ const Form = () => {
       title: '',
       description: '',
       author: '',
-      chapter: 0,
+      chapters: 0,
       status: 0,
       thumbnail: '',
       type: 0,
     },
-    type: '',
+    type: ['Manga', 'Webtoon', 'Manhwa'],
+    status: ['Completed', 'Ongoing'],
   });
 
   const handleChange = (e) => {
-    setState({ ...state, [e.target.id]: e.target.value });
+    const newManga = {
+      ...state.manga,
+      [e.target.id]: e.target.value,
+    };
+    setState({ ...state, manga: newManga });
   };
 
   const handleClick = () => {
+    const {
+      title,
+      description,
+      author,
+      chapters,
+      status,
+      thumbnail,
+      type,
+    } = state.manga;
 
+    fetch('/manga/add', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        title,
+        description,
+        author,
+        chapters,
+        status,
+        thumbnail,
+        type,
+      }),
+    })
+      .catch((err) => console.log(err));
   };
 
+  const { manga } = state;
+
+  console.log('Tyoe: ', manga.type);
+
   return (
-    <div className="form">
-      <label htmlFor="title">
-        Title:
-        <input type="text" placeholder="Enter Title" id="title" name="title" onChange={handleChange} />
-      </label>
-      <label htmlFor="description">
-        Description:
-        <input type="text" placeholder="Enter Description" id="description" name="description" onChange={handleChange} />
-      </label>
-      <label htmlFor="author">
-        Author:
-        <input type="text" placeholder="Enter Author" id="author" name="author" onChange={handleChange} />
-      </label>
-      <label htmlFor="Chapter">
-        Chapter:
-        <input type="text" placeholder="Enter Chapter" id="chapter" name="chapter" onChange={handleChange} />
-      </label>
-      <label htmlFor="Status">
-        Status:
-        <input type="text" placeholder="Enter Status" id="status" name="status" onChange={handleChange} />
-      </label>
-      <label htmlFor="thumbnail">
-        Thumbnail:
-        <input type="text" placeholder="Enter Thumbnail" id="thumbnail" name="thumbnail" onChange={handleChange} />
-      </label>
-      <label htmlFor="type">
-        Type:
-        <input type="text" placeholder="Enter Type" id="type" name="type" onChange={handleChange} />
-      </label>
+    <div className="formWrapper">
+      <div className="form">
+        <label htmlFor="title">
+          Title:
+          <div className="formInputDiv">
+            <input type="text" placeholder="Enter Title" id="title" name="title" onChange={handleChange} />
+          </div>
+        </label>
+        <label htmlFor="description">
+          Description:
+          <div className="formInputDiv">
+            <textarea id="description" placeholder="Enter Description" name="description" onChange={handleChange} />
+          </div>
+        </label>
+        <label htmlFor="author">
+          Author:
+          <div className="formInputDiv">
+            <input type="text" placeholder="Enter Author" id="author" name="author" onChange={handleChange} />
+          </div>
+        </label>
+        <label htmlFor="Chapter">
+          Chapter:
+          <div className="formInputDiv">
+            <input type="number" placeholder="Enter Chapters" id="chapters" name="chapters" onChange={handleChange} />
+          </div>
+        </label>
+        <label htmlFor="Status">
+          Status:
+          <div className="formInputDiv">
+            <select id="status" onChange={handleChange}>
+              {state.status.map((value, idx) => <option value={idx + 1}>{ value }</option>)}
+            </select>
+          </div>
+        </label>
+        <label htmlFor="thumbnail">
+          Thumbnail:
+          <div className="formInputDiv">
+            <input type="text" placeholder="Enter Thumbnail" id="thumbnail" name="thumbnail" onChange={handleChange} />
+          </div>
+        </label>
+        <label htmlFor="type">
+          Type:
+          <div className="formInputDiv">
+            <select id="type" onChange={handleChange}>
+              {state.type.map((value, idx) => <option value={idx + 1}>{ value }</option>)}
+            </select>
+          </div>
+        </label>
+        <div className="formInputDiv">
+          <input className="submit" type="submit" value="Submit" onClick={handleClick} />
+        </div>
+      </div>
     </div>
   );
 };
