@@ -12,6 +12,7 @@ module.exports = (env) => ({
     publicPath: '/',
     inline: true,
     headers: { 'Access-Control-Allow-Origin': '*' },
+    historyApiFallback: true,
     proxy: {
       '/(api|auth|assets|dist|manga)/**': {
         target: 'http://localhost:3000/',
@@ -32,6 +33,7 @@ module.exports = (env) => ({
         loader: 'babel-loader',
         query: {
           presets: ['@babel/env', '@babel/react'],
+          plugins: ['@babel/plugin-proposal-class-properties', '@babel/plugin-transform-runtime', '@babel/transform-async-to-generator'],
         },
       },
       {

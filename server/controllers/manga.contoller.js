@@ -2,7 +2,7 @@ const db = require('../db/db');
 
 const mangaController = {
   getAllByUser: (req, res, next) => {
-    const query = 'Select * from manga WHERE user_id=$1';
+    const query = 'SELECT manga.*, status.status AS status, type.type AS type FROM manga LEFT JOIN status ON manga.status = status._id LEFT JOIN type ON manga.type = type._id WHERE user_id = $1';
     const { user } = res.locals;
 
     // eslint-disable-next-line no-underscore-dangle
@@ -36,7 +36,7 @@ const mangaController = {
     });
   },
   getAll: (req, res, next) => {
-    const query = 'SELECT * FROM manga';
+    const query = 'SELECT manga.*, status.status AS status, type.type AS type FROM manga LEFT JOIN status ON manga.status = status._id LEFT JOIN type ON manga.type = type._id ORDER BY manga._id';
 
     db.query(query, (err, data) => {
       if (err) return next(err);

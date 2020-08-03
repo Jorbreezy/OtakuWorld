@@ -1,5 +1,7 @@
+/* eslint-disable max-len */
 import React, { useState } from 'react';
-// import '../../../styles/form.css';
+import '../../../styles/form.css';
+import apiRequest from '../../Authentication/Util';
 
 const Form = () => {
   const [state, setState] = useState({
@@ -35,7 +37,7 @@ const Form = () => {
       type,
     } = state.manga;
 
-    fetch('/manga/add', {
+    apiRequest('/manga/add', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -48,12 +50,13 @@ const Form = () => {
         type,
       }),
     })
+      .then((res) => {
+        if (res.status === 200) {
+          alert('Added Successfully');
+        }
+      })
       .catch((err) => console.log(err));
   };
-
-  const { manga } = state;
-
-  console.log('Tyoe: ', manga.type);
 
   return (
     <div className="formWrapper">
@@ -86,7 +89,7 @@ const Form = () => {
           Status:
           <div className="formInputDiv">
             <select id="status" onChange={handleChange}>
-              {state.status.map((value, idx) => <option value={idx + 1}>{ value }</option>)}
+              {state.status.map((value, idx) => <option value={idx + 1} key={value}>{ value }</option>)}
             </select>
           </div>
         </label>
@@ -100,7 +103,7 @@ const Form = () => {
           Type:
           <div className="formInputDiv">
             <select id="type" onChange={handleChange}>
-              {state.type.map((value, idx) => <option value={idx + 1}>{ value }</option>)}
+              {state.type.map((value, idx) => <option value={idx + 1} key={value}>{ value }</option>)}
             </select>
           </div>
         </label>

@@ -1,18 +1,26 @@
 import React from 'react';
 
 import {
-  BrowserRouter as Router,
   Link,
-  Switch,
-  Route,
+  useHistory,
 } from 'react-router-dom';
+import apiRequest from '../Authentication/Util';
 
-import List from '../Dashboard/List';
-import Reading from '../Dashboard/Manga/UsersManga';
-import Form from '../Dashboard/Add/Form';
+const Nav = () => {
+  const history = useHistory();
 
-const Nav = () => (
-  <Router>
+  const signout = () => {
+    apiRequest('/auth/signOut', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+    })
+      .then(() => {
+        history.push('/login');
+      })
+      .catch((err) => console.log(err));
+  };
+
+  return (
     <nav id="header">
       <div className="navItem">
         <h1>Otaku World</h1>
@@ -27,11 +35,7 @@ const Nav = () => (
           </li>
           <li>|</li>
           <li>
-            <Link to="/currentlyWatching">Currently Watching</Link>
-          </li>
-          <li>|</li>
-          <li>
-            <Link to="/currentlyReading">Currently Reading</Link>
+            <Link to="/current">Currently Reading/Watching</Link>
           </li>
           <li>|</li>
           <li>
@@ -39,19 +43,12 @@ const Nav = () => (
           </li>
           <li>|</li>
           <li>
-            <Link to="/profile">Profile</Link>
+            <button type="button" onClick={signout}>Signout</button>
           </li>
         </ul>
       </div>
     </nav>
-
-    <Switch>
-      <Route exact path="/discover" component={List} />
-      <Route exact path="/currentlyReading" component={Reading} />
-      <Route exact path="/add" component={Form} />
-    </Switch>
-
-  </Router>
-);
+  );
+};
 
 export default Nav;

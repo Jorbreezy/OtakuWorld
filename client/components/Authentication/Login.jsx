@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import Auth from './Auth';
+import apiRequest from './Util';
+// import apiRequest from './Util';
 
 const Login = () => {
   const [state, setState] = useState({
@@ -18,7 +19,7 @@ const Login = () => {
   const handleClick = () => {
     const { username, password } = state;
 
-    fetch('/auth/login', {
+    apiRequest('/auth/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username, password }),
@@ -27,9 +28,7 @@ const Login = () => {
         if (res.status !== 200) {
           setState({ warning: res.message });
         } else {
-          Auth.login(() => {
-            history.push('/discover');
-          }, username);
+          history.push('/discover');
         }
       })
       .catch((err) => console.log(err));

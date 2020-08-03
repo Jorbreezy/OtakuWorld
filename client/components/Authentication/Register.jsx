@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import Auth from './Auth';
+import apiRequest from './Util';
 
 const Register = () => {
   const [state, setState] = useState({
@@ -20,7 +20,7 @@ const Register = () => {
   const handleClick = () => {
     const { username, password } = state;
 
-    fetch('/auth/register', {
+    apiRequest('/auth/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username, password }),
@@ -29,9 +29,7 @@ const Register = () => {
         if (res.status !== 200) {
           setState({ warning: res.message });
         } else {
-          Auth.login(() => {
-            history.push('/discover');
-          }, username);
+          history.push('/discover');
         }
       })
       .catch((err) => console.log(err));

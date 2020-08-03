@@ -23,10 +23,7 @@ app.use('/auth', user);
 app.use('/manga', manga);
 
 // Main Get Request, Send html file
-app.get('/', (req, res) => res.sendFile(path.resolve(__dirname, '../client/index.html')));
-
-// Catch all error handler
-app.all('*', (req, res) => res.sendStatus(404));
+app.get('*', (req, res) => res.sendFile(path.resolve(__dirname, '../client/index.html')));
 
 // Global Error Handler
 app.use((err, req, res) => {
