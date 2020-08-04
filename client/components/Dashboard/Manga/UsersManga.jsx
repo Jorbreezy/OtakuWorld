@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useHistory } from 'react-router-dom';
 import Card from '../Card';
 import apiRequest from '../../Authentication/Util';
 
@@ -7,6 +8,12 @@ const List = () => {
     data: [],
     err: '',
   });
+
+  const history = useHistory();
+
+  const clickHandler = (e, title) => {
+    history.push(`/current/${title.replace(/\s/g, '+')}`);
+  };
 
   const get = () => {
     apiRequest('/manga/allByUser')
@@ -36,6 +43,7 @@ const List = () => {
           thumbnail={thumbnail}
           title={title}
           key={id}
+          clickHandler={clickHandler}
         />
       ))}
     </div>

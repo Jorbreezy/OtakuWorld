@@ -7,7 +7,7 @@ import Nav from '../NavBar/Nav';
 import List from './List';
 import Reading from './Manga/UsersManga';
 import Form from './Add/Form';
-import SingleItem from './Manga/singleItem';
+import Detail from './Manga/Detail';
 
 const Dashboard = () => (
   <>
@@ -16,7 +16,7 @@ const Dashboard = () => (
       <Route exact path="/current" component={Reading} />
       <Route exact path="/add" component={Form} />
       <Route exact path={['/discover', '/']} component={List} />
-      <Route exact path="/discover/:qtitle" component={SingleItem} />
+      <Route exact path={['/discover/:qtitle', '/current/:qtitle']} component={Detail} />
     </Switch>
   </>
 );

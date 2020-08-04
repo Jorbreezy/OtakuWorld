@@ -1,4 +1,5 @@
 import React from 'react';
+import { FiLogOut } from 'react-icons/fi';
 
 import {
   Link,
@@ -33,17 +34,17 @@ const Nav = () => {
           <li>
             <Link to="/discover">Discover</Link>
           </li>
-          <li>|</li>
+
           <li>
             <Link to="/current">Currently Reading/Watching</Link>
           </li>
-          <li>|</li>
+
           <li>
             <Link to="/add">Add manga or anime</Link>
           </li>
-          <li>|</li>
+
           <li>
-            <button type="button" onClick={signout}>Signout</button>
+            <span className="signout"><FiLogOut onClick={signout} /></span>
           </li>
         </ul>
       </div>

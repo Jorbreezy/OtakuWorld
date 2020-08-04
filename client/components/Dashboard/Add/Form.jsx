@@ -13,6 +13,7 @@ const Form = () => {
       status: 0,
       thumbnail: '',
       type: 0,
+      genre: '',
     },
     type: ['Manga', 'Webtoon', 'Manhwa'],
     status: ['Completed', 'Ongoing'],
@@ -35,6 +36,7 @@ const Form = () => {
       status,
       thumbnail,
       type,
+      genre,
     } = state.manga;
 
     apiRequest('/manga/add', {
@@ -48,6 +50,7 @@ const Form = () => {
         status,
         thumbnail,
         type,
+        genre,
       }),
     })
       .then((res) => {

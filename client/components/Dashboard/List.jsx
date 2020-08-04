@@ -23,6 +23,8 @@ const List = () => {
         return 0;
       })
       .then((res) => {
+        console.log(res);
+
         setState({ ...state, data: res });
       })
       .catch((err) => console.log('Err: ', err));

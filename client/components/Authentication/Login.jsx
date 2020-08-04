@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import apiRequest from './Util';
-// import apiRequest from './Util';
+import '../../styles/login.css';
 
 const Login = () => {
   const [state, setState] = useState({
@@ -39,12 +39,13 @@ const Login = () => {
   };
 
   return (
-    <div>
-      <div>
-        <h2>Login</h2>
-        <hr />
-      </div>
+    <div className="loginDiv">
       <div className="container">
+        <div>
+          <h2>Login</h2>
+          <hr />
+        </div>
+
         <h3>Username</h3>
         <input type="text" placeholder="Enter Username" id="username" name="username" onChange={handleChange} />
 

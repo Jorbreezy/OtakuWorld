@@ -21,6 +21,9 @@ class App extends PureComponent {
 
           <Route component={Dashboard} />
         </Switch>
+        <footer>
+          <p>Jordan Corp &copy; 2020</p>
+        </footer>
       </Router>
     );
   }

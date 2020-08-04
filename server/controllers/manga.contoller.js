@@ -36,7 +36,7 @@ const mangaController = {
     });
   },
   getAll: (req, res, next) => {
-    const query = 'SELECT manga.*, status.status AS status, type.type AS type FROM manga LEFT JOIN status ON manga.status = status._id LEFT JOIN type ON manga.type = type._id ORDER BY manga._id';
+    const query = 'SELECT distinct manga.*, status.status AS status, type.type AS type, g.genre AS genre FROM manga LEFT JOIN status ON manga.status = status._id LEFT JOIN type ON manga.type = type._id LEFT JOIN (SELECT string_agg(genre.genre_name, \',\') AS genre, manga_genre.manga_id FROM genre INNER JOIN manga_genre ON genre._id = manga_genre.genre_id GROUP BY manga_genre.manga_id) g ON manga._id = g.manga_id ORDER BY manga._id;';
 
     db.query(query, (err, data) => {
       if (err) return next(err);

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { PropTypes } from 'prop-types';
 import apiRequest from '../../Authentication/Util';
 
-const Card = ({ match }) => {
+const Detail = ({ match }) => {
   const [state, setState] = useState({});
 
   const getSingleManga = async () => {
@@ -27,22 +27,21 @@ const Card = ({ match }) => {
   }, []);
 
   const {
-    title, description, chapters, status, type, thumbnail, author,
+    title, description, chapters, status, type, thumbnail, author, genre,
   } = state;
 
   return (
-    <div className="singleItem">
+    <div className="details">
+      <div className="detailTitle">
+        <h1>
+          { title }
+        </h1>
+      </div>
       <div className="wrapper">
-        <div className="itemImage">
+        <div className="detailImage">
           <img className="img" src={thumbnail} alt="ItemImage" />
         </div>
         <div className="info">
-          <div className="cardInfo">
-            <h3>
-              Title:
-              { title }
-            </h3>
-          </div>
           <div className="cardInfo">
             <h3>
               Author:
@@ -67,18 +66,28 @@ const Card = ({ match }) => {
               { type }
             </h3>
           </div>
+          <div className="cardInfo">
+            <h3>
+              Genre(s):
+              { genre }
+            </h3>
+          </div>
         </div>
       </div>
       <div className="description">
+        <div>
+          <h2>Description</h2>
+          <hr />
+        </div>
         <h3>{ description }</h3>
       </div>
     </div>
   );
 };
 
-Card.propTypes = {
+Detail.propTypes = {
   // eslint-disable-next-line react/forbid-prop-types
   match: PropTypes.object.isRequired,
 };
 
-export default Card;
+export default Detail;
