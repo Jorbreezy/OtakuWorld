@@ -1,11 +1,12 @@
 const { Pool } = require('pg');
 
-const { DB_URL } = process.env;
-
-const PG_URI = DB_URL;
+const { DB_USER, DB_PASSWORD, DB_HOST } = process.env;
 
 const pool = new Pool({
-  connectionString: PG_URI,
+  user: DB_USER,
+  host: DB_HOST,
+  database: 'OtakuWorld',
+  password: DB_PASSWORD,
 });
 
 module.exports = {

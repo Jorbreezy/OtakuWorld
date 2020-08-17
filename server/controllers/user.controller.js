@@ -21,7 +21,7 @@ const userController = {
         const user = data.rows[0];
 
         // eslint-disable-next-line no-underscore-dangle
-        const token = jwt.sign({ id: user._id }, process.env.SECRET);
+        const token = jwt.sign({ id: user.id }, process.env.SECRET);
         res.cookie('token', token, { httpOnly: true });
 
         return next();
@@ -30,10 +30,11 @@ const userController = {
   },
   register: (req, res, next) => {
     const { password, username } = req.body;
+
     const queryString = 'SELECT * FROM users WHERE username = $1';
     // search for any rows in database where username exists
 
-    db.query(queryString, [username], (err, data) => {
+    return db.query(queryString, [username], (err, data) => {
       if (err) {
         return res.status(400).json({ message: 'Error occured in register' });
       }
@@ -54,13 +55,12 @@ const userController = {
         // stores username and hashed password in table in database
         return db.query(queryStr, queryArr2, (qerr) => {
           if (qerr) {
-            return res.status(400).json({ message: 'Error occured in register' });
+            return res.status(400).json({ message: 'Error occured in register 2' });
           }
 
           // eslint-disable-next-line no-underscore-dangle
           // const token = jwt.sign({ id: user._id }, process.env.SECRET);
           // res.cookie('token', token, { httpOnly: true });
-
           return next();
         });
       });

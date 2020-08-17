@@ -3,8 +3,10 @@ const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
+const auth = require('./routers/auth.js');
 const user = require('./routers/user.js');
 const manga = require('./routers/manga.js');
+const { decodeUser, verifyUser } = require('./controllers/authenticate.controller.js');
 
 const app = express();
 const { PORT } = process.env;
@@ -17,9 +19,13 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(cors());
+app.get('*', decodeUser);
+app.patch('*', decodeUser);
+app.post(/^(?!.*?auth).*/, decodeUser, verifyUser);
 
 // Route handlers
-app.use('/auth', user);
+app.use('/auth', auth);
+app.use('/user', user);
 app.use('/manga', manga);
 
 // Main Get Request, Send html file
@@ -27,7 +33,7 @@ app.get('*', (req, res) => res.sendFile(path.resolve(__dirname, '../client/index
 
 // Global Error Handler
 app.use((err, req, res) => {
-  console.log(err);
+  console.error(err);
   return res.status(500).send('Error', { error: err });
 });
 

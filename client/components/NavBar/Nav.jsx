@@ -1,3 +1,5 @@
+/* eslint-disable jsx-a11y/click-events-have-key-events */
+/* eslint-disable jsx-a11y/no-static-element-interactions */
 import React from 'react';
 import { FiLogOut } from 'react-icons/fi';
 
@@ -23,11 +25,8 @@ const Nav = () => {
 
   return (
     <nav id="header">
-      <div className="navItem">
+      <div className="navItem websiteName" onClick={() => history.push('/discover')}>
         <h1>Otaku World</h1>
-      </div>
-      <div className="navItem">
-        <input className="search" placeholder="Search..." />
       </div>
       <div className="navItem">
         <ul className="right">
@@ -36,11 +35,11 @@ const Nav = () => {
           </li>
 
           <li>
-            <Link to="/current">Currently Reading/Watching</Link>
+            <Link to="/favorite">Currently Reading</Link>
           </li>
 
           <li>
-            <Link to="/add">Add manga or anime</Link>
+            <Link to="/add">Add manga</Link>
           </li>
 
           <li>

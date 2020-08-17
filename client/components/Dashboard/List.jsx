@@ -1,55 +1,113 @@
 import React, { useState, useEffect } from 'react';
+import { PropTypes } from 'prop-types';
 import { useHistory } from 'react-router-dom';
 import Card from './Card';
 import apiRequest from '../Authentication/Util';
 
-const List = () => {
+import FilterMenu from './Manga/FilterMenu';
+
+const List = ({ match }) => {
   const [state, setState] = useState({
     data: [],
     err: '',
   });
 
+  const [query, setQuery] = useState('');
+  const [genre, setGenre] = useState([]);
+  const [status, setStatus] = useState('');
+  const [type, setType] = useState('');
+  const path = match.path.split('/')[1];
+
   const history = useHistory();
 
-  const get = () => {
-    apiRequest('/manga/all')
-      .then((res) => {
-        if (res.status !== 200) {
-          setState({ err: res.message });
-        } else {
-          return res.json();
-        }
+  const get = (params = '') => {
+    if (path === 'favorite') {
+      apiRequest(`/user/favorite${params}`)
+        .then((res) => {
+          console.log(res);
 
-        return 0;
-      })
-      .then((res) => {
-        console.log(res);
+          if (res.status !== 200) {
+            setState({ err: res.message });
+          } else {
+            return res.json();
+          }
 
-        setState({ ...state, data: res });
-      })
-      .catch((err) => console.log('Err: ', err));
+          return 0;
+        })
+        .then((res) => {
+          console.log(res);
+          setState({ ...state, data: res });
+        })
+        .catch((err) => console.log('Err: ', err));
+    } else {
+      apiRequest(`/manga/${params}`)
+        .then((res) => {
+          if (res.status !== 200) {
+            setState({ err: res.message });
+          } else {
+            return res.json();
+          }
+
+          return 0;
+        })
+        .then((res) => {
+          setState({ ...state, data: res });
+        })
+        .catch((err) => console.log('Err: ', err));
+    }
   };
 
   useEffect(() => {
     get();
   }, []);
 
-  const clickHandler = (e, title) => {
-    history.push(`/discover/${title.replace(/\s/g, '+')}`);
+  const clickHandler = (e, title, id) => {
+    history.push(`/${path}/${id}/${title.replace(/\s/g, '+')}`);
+  };
+
+  const searchParams = () => {
+    const search = new URLSearchParams();
+    if (query.length > 0) search.append('title', query);
+    if (status.length > 0) search.append('status', status);
+    if (type.length > 0) search.append('type', type);
+    if (genre.length > 0) genre.map(({ value }) => search.append('genre', value));
+
+    history.push({
+      pathname: `/${path}`,
+      search: `?${search.toString()}`,
+    });
+
+    get(`?${search.toString()}`);
   };
 
   return (
     <div className="itemContainer">
-      {state.data.map(({ thumbnail, title, _id: id }) => (
-        <Card
-          thumbnail={thumbnail}
-          title={title}
-          key={id}
-          clickHandler={clickHandler}
-        />
-      ))}
+      <FilterMenu
+        setQuery={setQuery}
+        setGenre={setGenre}
+        setStatus={setStatus}
+        setType={setType}
+        getData={get}
+        searchParam={searchParams}
+      />
+      <div className="listWrapper">
+        {state.data.map(({ thumbnail, title, id }) => (
+          <Card
+            thumbnail={thumbnail}
+            title={title}
+            key={id}
+            id={id}
+            clickHandler={clickHandler}
+          />
+        ))}
+      </div>
     </div>
   );
+};
+
+List.propTypes = {
+  // eslint-disable-next-line react/forbid-prop-types
+  match: PropTypes.object.isRequired,
 };
 
 export default List;

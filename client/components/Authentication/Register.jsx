@@ -13,12 +13,15 @@ const Register = () => {
 
   const handleChange = (e) => {
     setState({
-      [e.target.id]: e.target.value,
+      ...state, [e.target.id]: e.target.value,
     });
   };
 
   const handleClick = () => {
     const { username, password } = state;
+
+    console.log('Username', username);
+    console.log('Password', password);
 
     apiRequest('/auth/register', {
       method: 'POST',

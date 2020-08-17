@@ -1,17 +1,20 @@
 const jwt = require('jsonwebtoken');
 
-const verify = async (req, res, next) => {
+exports.decodeUser = async (req, res, next) => {
   const { token } = req.cookies;
 
   try {
     const decrypt = await jwt.verify(token, process.env.SECRET);
 
     res.locals.user = decrypt;
+  } catch (err) { /* We don't care */ }
 
-    return next();
-  } catch (err) {
-    return res.status(401).json({ message: err });
-  }
+  return next();
 };
 
-module.exports = { verify };
+exports.verifyUser = (req, res, next) => {
+  const { user } = res.locals;
+  if (user) return next();
+
+  return res.status(401).json({ message: 'User Not authorized' });
+};

@@ -1,5 +1,7 @@
+/* eslint-disable jsx-a11y/label-has-associated-control */
 /* eslint-disable max-len */
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import Select from 'react-select';
 import '../../../styles/form.css';
 import apiRequest from '../../Authentication/Util';
 
@@ -12,12 +14,16 @@ const Form = () => {
       chapters: 0,
       status: 0,
       thumbnail: '',
-      type: 0,
-      genre: '',
+      type: 1,
     },
     type: ['Manga', 'Webtoon', 'Manhwa'],
     status: ['Completed', 'Ongoing'],
+    genre: [],
   });
+
+  const [genreArr, setGenre] = useState([]);
+  const [statusObj, setStatus] = useState({});
+  const [typeObj, setType] = useState({});
 
   const handleChange = (e) => {
     const newManga = {
@@ -33,11 +39,10 @@ const Form = () => {
       description,
       author,
       chapters,
-      status,
       thumbnail,
-      type,
-      genre,
     } = state.manga;
+
+    const gArr = genreArr.map((obj) => obj.value).join(',');
 
     apiRequest('/manga/add', {
       method: 'POST',
@@ -47,10 +52,10 @@ const Form = () => {
         description,
         author,
         chapters,
-        status,
+        status: statusObj.value,
         thumbnail,
-        type,
-        genre,
+        type: typeObj.value,
+        genre: gArr,
       }),
     })
       .then((res) => {
@@ -60,6 +65,26 @@ const Form = () => {
       })
       .catch((err) => console.log(err));
   };
+
+  const getGenre = () => {
+    apiRequest('/manga/genre')
+      .then((res) => res.json())
+      .then((res) => {
+        setState({ ...state, genre: res });
+        return 0;
+      })
+      .catch((err) => console.log(err));
+  };
+
+  console.log('GenreArr: ', state.genre);
+
+  useEffect(() => {
+    getGenre();
+  }, []);
+
+  const options = state.genre.map(({ genre: label, id: value }) => ({ label, value }));
+  const statusOptions = state.status.map((value, key) => ({ value: key + 1, label: value }));
+  const typeOptions = state.type.map((value, key) => ({ value: key + 1, label: value }));
 
   return (
     <div className="formWrapper">
@@ -91,9 +116,13 @@ const Form = () => {
         <label htmlFor="Status">
           Status:
           <div className="formInputDiv">
-            <select id="status" onChange={handleChange}>
-              {state.status.map((value, idx) => <option value={idx + 1} key={value}>{ value }</option>)}
-            </select>
+            <Select options={statusOptions} onChange={setStatus} />
+          </div>
+        </label>
+        <label htmlFor="Genre">
+          Genre:
+          <div className="formInputDiv">
+            <Select options={options} isMulti isSearchable onChange={setGenre} />
           </div>
         </label>
         <label htmlFor="thumbnail">
@@ -105,9 +134,10 @@ const Form = () => {
         <label htmlFor="type">
           Type:
           <div className="formInputDiv">
-            <select id="type" onChange={handleChange}>
-              {state.type.map((value, idx) => <option value={idx + 1} key={value}>{ value }</option>)}
-            </select>
+            <Select
+              options={typeOptions}
+              onChange={setType}
+            />
           </div>
         </label>
         <div className="formInputDiv">

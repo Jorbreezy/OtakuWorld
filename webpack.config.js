@@ -14,7 +14,7 @@ module.exports = (env) => ({
     headers: { 'Access-Control-Allow-Origin': '*' },
     historyApiFallback: true,
     proxy: {
-      '/(api|auth|assets|dist|manga)/**': {
+      '/(api|auth|assets|dist|manga|user)/**': {
         target: 'http://localhost:3000/',
         secure: false,
       },
