@@ -1,2 +1,86 @@
+.loginDiv {
+  display: flex;
+  flex-grow: 2;
+  width: 100%;
+  justify-content: center;
+  box-sizing: border-box;
+}
 
+.loginDiv > .container {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  width: 20%;
+  height: 40%;
+  padding-top: 20px;
+}
 
+.loginDiv h3 {
+  text-align: start;
+}
+
+.inputWrapper {
+  color: black;
+  border: 1px solid;
+  width: 50%;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 20px;
+  border-radius: 4px;
+  border: 1px solid #bbe1fa;
+  background-color: #bbe1fa;
+}
+
+.inputWrapper > input {
+  width: 95%;
+  padding: 5px;
+  margin-right: 16px;
+  font-size: 14px;
+  border-radius: 4px;
+  outline: none;
+  vertical-align:middle;
+}
+
+.inputWrapper > button {
+  width: 100%;
+  border-radius: 4px;
+  border: none;
+  background-color: #1762c4;
+  padding: 8px 12px;
+  cursor: pointer;
+  color: #bbe1fa;
+  font-size: 16px;
+  text-decoration: none;
+}
+
+.inputWrapper > button:hover { 
+  background-color: #156ec2;
+}
+
+.redirectButton {
+  border: 1px solid;
+  width: 50%;
+  margin: 20px auto;
+  padding: 20px;
+  border-radius: 4px;
+  border: 1px solid #bbe1fa;
+  background-color: #bbe1fa;
+}
+
+.redirectButton > p {
+  color: black;
+}
+
+.redirectButton > p > button {
+  padding: 0;
+  border: none;
+  background: none;
+  color: #069;
+  cursor: pointer;
+  font-size: inherit;
+  margin-left: 5px;
+}
+
+.redirectButton > p > button:hover {
+  text-decoration: underline;
+}

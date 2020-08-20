@@ -6,6 +6,7 @@ const Register = () => {
   const [state, setState] = useState({
     username: '',
     password: '',
+    confirmPassword: '',
     err: '',
   });
 
@@ -18,24 +19,25 @@ const Register = () => {
   };
 
   const handleClick = () => {
-    const { username, password } = state;
+    const { username, password, confirmPassword } = state;
 
-    console.log('Username', username);
-    console.log('Password', password);
-
-    apiRequest('/auth/register', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username, password }),
-    })
-      .then((res) => {
-        if (res.status !== 200) {
-          setState({ warning: res.message });
-        } else {
-          history.push('/discover');
-        }
+    if (password !== confirmPassword) {
+      setState({ err: 'Password does not match!' });
+    } else {
+      apiRequest('/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password }),
       })
-      .catch((err) => console.log(err));
+        .then((res) => {
+          if (res.status !== 200) {
+            setState({ warning: res.message });
+          } else {
+            history.push('/discover');
+          }
+        })
+        .catch((err) => console.log(err));
+    }
   };
 
   const login = () => {
@@ -43,22 +45,32 @@ const Register = () => {
   };
 
   return (
-    <div>
-      <div>
-        <h2>Register</h2>
-        <hr />
-      </div>
+    <div className="loginDiv">
       <div className="container">
-        <h3>Username</h3>
-        <input type="text" placeholder="Enter Username" id="username" name="username" onChange={handleChange} />
+        <div>
+          <h2>Register</h2>
+        </div>
 
-        <h3>Password</h3>
-        <input type="password" placeholder="Enter Password" id="password" name="psw" onChange={handleChange} />
+        <div className="inputWrapper">
+          <h3>Username</h3>
+          <input type="text" placeholder="Enter Username" id="username" name="username" onChange={handleChange} />
 
-        <p>{ state.warning }</p>
+          <h3>Password</h3>
+          <input type="password" placeholder="Enter Password" id="password" name="psw" onChange={handleChange} />
 
-        <button type="button" onClick={handleClick}>Register</button>
-        <button type="button" onClick={login}>login</button>
+          <h3>Confirm password</h3>
+          <input type="password" placeholder="Confirm Password" id="confirmPassword" name="cpsw" onChange={handleChange} />
+
+          <p className="authError">{ state.err }</p>
+
+          <button type="button" onClick={handleClick}>Create Account</button>
+        </div>
+        <div className="redirectButton">
+          <p>
+            Have an account?
+            <button type="button" onClick={login}>Login</button>
+          </p>
+        </div>
       </div>
     </div>
   );

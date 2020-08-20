@@ -24,8 +24,6 @@ const List = ({ match }) => {
     if (path === 'favorite') {
       apiRequest(`/user/favorite${params}`)
         .then((res) => {
-          console.log(res);
-
           if (res.status !== 200) {
             setState({ err: res.message });
           } else {
@@ -35,7 +33,6 @@ const List = ({ match }) => {
           return 0;
         })
         .then((res) => {
-          console.log(res);
           setState({ ...state, data: res });
         })
         .catch((err) => console.log('Err: ', err));

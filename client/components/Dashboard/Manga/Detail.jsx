@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { PropTypes } from 'prop-types';
 import { AiFillHeart, AiOutlineHeart } from 'react-icons/ai';
 import apiRequest from '../../Authentication/Util';
+import Stars from '../Rating/Stars';
 
 import '../../../styles/detail.css';
 
@@ -56,8 +57,6 @@ const Detail = ({ match }) => {
       .catch((err) => console.log(err));
   };
 
-  console.log('State: ', state);
-
   const {
     title,
     description,
@@ -87,6 +86,15 @@ const Detail = ({ match }) => {
 
   genre = genre.split(',');
 
+  const rate = (id, rating) => {
+    apiRequest('/manga/rate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id, rating }),
+    })
+      .catch((err) => console.log(err));
+  };
+
   return (
     <div className="details">
       <section className="detailImage">
@@ -98,6 +106,9 @@ const Detail = ({ match }) => {
             <h1>
               { title }
             </h1>
+          </div>
+          <div className="ratingWrap">
+            <Stars id={state.id} click={rate} rating={state.rating === null ? 0 : state.rating} />
           </div>
           <div className="miniBar">
             <div className="genreWrap">

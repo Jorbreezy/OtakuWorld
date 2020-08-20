@@ -8,6 +8,7 @@ const {
   unfavorite,
   updateChapter,
   getOneById,
+  rate,
 } = require('../controllers/manga.controller.js');
 
 const router = express.Router();
@@ -35,5 +36,8 @@ router.patch('/:id', updateChapter, (req, res) => res.status(200).send('Updated 
 
 // Update CurrentChapter
 router.get('/:id', getOneById, (req, res) => res.status(200).json(res.locals.getOne));
+
+// Rate a Manga
+router.post('/rate', rate, (req, res) => res.status(200).send({ message: 'rate successfully' }));
 
 module.exports = router;

@@ -49,3 +49,7 @@
   font-size: 1.25rem;
   margin-bottom: 5px;
 }
+
+textarea {
+  height: 350px;
+}

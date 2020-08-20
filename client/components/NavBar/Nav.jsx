@@ -35,7 +35,7 @@ const Nav = () => {
           </li>
 
           <li>
-            <Link to="/favorite">Currently Reading</Link>
+            <Link to="/favorite">Favorite</Link>
           </li>
 
           <li>

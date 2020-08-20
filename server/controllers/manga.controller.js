@@ -1,4 +1,3 @@
-const db = require('../db/db');
 const knexDb = require('../db/knexDb');
 
 const mangaController = {
@@ -63,7 +62,7 @@ const mangaController = {
 
     const mangaQuery = knexDb
       .from('manga')
-      .select('manga.*', 'status.status AS status', 'type.type As type', 'g.genre AS genre');
+      .select('manga.*', 'status.status AS status', 'type.type As type', 'g.genre AS genre', 'r.rating AS rating');
 
     if (user) {
       mangaQuery.select(knexDb.raw('user_manga.user_id = ? as is_favorite, user_manga.current_chapter', user.id))
@@ -73,6 +72,13 @@ const mangaController = {
 
     mangaQuery.leftJoin('status', 'manga.status', 'status.id')
       .leftJoin('type', 'manga.type', 'type.id')
+      .leftJoin(knexDb
+        .select(knexDb.raw('avg(rating.rating) as rating'), 'rating.manga_id')
+        .from('rating')
+        .as('r')
+        .groupBy('rating.manga_id'),
+      'manga.id',
+      'r.manga_id')
       .leftJoin(knexDb
         .select(knexDb.raw('string_agg(genre.genre, \',\') AS genre'), 'manga_genre.manga_id')
         .from('genre')
@@ -88,12 +94,9 @@ const mangaController = {
 
     return next();
   },
-  addOne: (req, res, next) => {
-    const query = 'INSERT INTO manga (title, description, chapters, author, type, status, thumbnail) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id';
-
+  addOne: async (req, res, next) => {
     const { user } = res.locals;
 
-    console.log(user);
     const {
       title,
       description,
@@ -105,60 +108,30 @@ const mangaController = {
       genre,
     } = req.body;
 
-    // eslint-disable-next-line no-underscore-dangle
-    const qarr = [title, description, chapters, author, type, status, thumbnail];
-    db.query(query, qarr, (err, data) => {
-      if (err) return next(err);
+    await knexDb('manga')
+      .insert({
+        title, description, chapters, author, type, status, thumbnail,
+      })
+      .returning('id')
+      .then((data) => {
+        const id = data[0];
 
-      // eslint-disable-next-line no-underscore-dangle
-      const newData = data.rows[0].id;
+        const insertGenre = genre.split(',').map((value) => ({ manga_id: id, genre_id: parseInt(value, 10) }));
 
-      let beginQ = 'INSERT INTO manga_genre(manga_id, genre_id) VALUES';
+        knexDb('manga_genre')
+          .insert(insertGenre)
+          .then(() => {})
+          .catch((err) => next(err));
 
-      const query2 = genre.split(',').map((val, idx) => `($1, $${idx + 2}),`).join(' ');
+        knexDb('user_manga')
+          .insert({ manga_id: id, user_id: user.id })
+          .then(() => {})
+          .catch((err) => next(err));
+      })
+      .catch((err) => next(err));
 
-      const parseGenre = genre.split(',').map((val) => parseInt(val, 10));
-
-      // eslint-disable-next-line no-underscore-dangle
-      const qArr = [newData, ...parseGenre];
-
-      beginQ = beginQ.concat(query2).replace(/,$/, '');
-
-      return db.query(beginQ, qArr, (err2) => {
-        if (err2) return next(err2);
-
-        return db.query('INSERT INTO user_manga(manga_id, user_id) VALUES ($1, $2)', [newData, user.id], (err3) => {
-          if (err3) return next(err3);
-
-          return next();
-        });
-      });
-    });
+    return next();
   },
-  // addOne: async (req, res, next) => {
-  //   const { user } = res.locals;
-
-  //   const {
-  //     title,
-  //     description,
-  //     chapters,
-  //     author,
-  //     type,
-  //     status,
-  //     thumbnail,
-  //     genre,
-  //   } = req.body;
-
-  //   const insertQuery = await knexDb('manga')
-  //     .insert({
-  //       title, description, chapters, author, type, status, thumbnail,
-  //     })
-  //     .returning('id')
-  //     .then((data) => {
-  //       return knexDb('manga_genre')
-  //         .insert({  })
-  //     });
-  // },
   getAll: async (req, res, next) => {
     const {
       genre, type, title, status,
@@ -220,41 +193,51 @@ const mangaController = {
     return next();
   },
   favorite: (req, res, next) => {
-    const query = 'INSERT INTO user_manga(manga_id, user_id) VALUES ($1, $2)';
-
     const { mangaId } = req.body;
     const { user } = res.locals;
 
-    db.query(query, [mangaId, user.id], (err) => {
-      if (err) return next(err);
+    knexDb('user_manga')
+      .insert({ manga_id: mangaId, user_id: user.id })
+      .then(() => {})
+      .catch((err) => next(err));
 
-      return next();
-    });
+    return next();
   },
   unfavorite: (req, res, next) => {
-    const query = 'DELETE FROM user_manga WHERE user_manga.manga_id = $1 AND user_manga.user_id = $2';
-
     const { mangaId } = req.body;
     const { user } = res.locals;
 
-    db.query(query, [mangaId, user.id], (err) => {
-      if (err) return next(err);
+    knexDb('user_manga')
+      .del()
+      .where({ manga_id: mangaId, user_id: user.id })
+      .then(() => {})
+      .catch((err) => next(err));
 
-      return next();
-    });
+    return next();
   },
   updateChapter: (req, res, next) => {
-    const query = 'UPDATE user_manga SET current_chapter = $1 WHERE user_manga.manga_id = $2 AND user_manga.user_id = $3';
-
     const { currentChapter } = req.body;
-    const { id: mangaId } = req.params;
+    const { id } = req.params;
     const { user } = res.locals;
 
-    db.query(query, [currentChapter, mangaId, user.id], (err) => {
-      if (err) return next(err);
+    knexDb('user_manga')
+      .update('current_chapter', currentChapter)
+      .where({ manga_id: id, user_id: user.id })
+      .then(() => {})
+      .catch((err) => next(err));
 
-      return next();
-    });
+    return next();
+  },
+  rate: (req, res, next) => {
+    const { id, rating } = req.body;
+    const { user } = res.locals;
+
+    knexDb('rating')
+      .insert({ manga_id: id, user_id: user.id, rating })
+      .then(() => {})
+      .catch((err) => next(err));
+
+    return next();
   },
 };
 
@@ -309,6 +292,15 @@ CREATE table user_manga (
   FOREIGN KEY (user_id) REFERENCES users (id),
   FOREIGN KEY (manga_id) REFERENCES manga (id)
 );
+
+CREATE TABLE rating (
+  id serial PRIMARY KEY,
+  user_id INTEGER NOT NULL,
+  manga_id INTEGER NOT NULL,
+  rating INTEGER NOT NULL DEFAULT 0,
+  FOREIGN KEY (user_id) REFERENCES users (id),
+  FOREIGN KEY (manga_id) REFERENCES manga (id)
+)
 
 */
 

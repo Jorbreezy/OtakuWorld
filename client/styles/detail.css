@@ -121,3 +121,7 @@
   font-weight: 500;
   text-align: center;
 }
+
+.detailTitle > h1 {
+  margin-bottom: 10px;
+}

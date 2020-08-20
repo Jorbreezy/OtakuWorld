@@ -3,6 +3,7 @@ html, body {
   height: 100%;
   margin: 0;
   padding: 0;
+  font-family: "Trebuchet MS", "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", sans-serif;
 }
 
 body {
@@ -122,7 +123,7 @@ ul li a:hover {
   padding: 0;
   margin: 10px;
   cursor: pointer;
-  max-height: 28rem;
+  height: 28rem;
 }
 
 .itemInfo {

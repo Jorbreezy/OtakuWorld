@@ -43,19 +43,25 @@ const Login = () => {
       <div className="container">
         <div>
           <h2>Login</h2>
-          <hr />
         </div>
 
-        <h3>Username</h3>
-        <input type="text" placeholder="Enter Username" id="username" name="username" onChange={handleChange} />
+        <div className="inputWrapper">
+          <h3>Username</h3>
+          <input type="text" placeholder="Enter Username" id="username" name="username" onChange={handleChange} />
 
-        <h3>Password</h3>
-        <input type="password" placeholder="Enter Password" id="password" name="psw" onChange={handleChange} />
+          <h3>Password</h3>
+          <input type="password" placeholder="Enter Password" id="password" name="psw" onChange={handleChange} />
 
-        <p>{ state.warning }</p>
+          <p className="authError">{ state.err }</p>
 
-        <button type="button" onClick={handleClick}>Login</button>
-        <button type="button" onClick={register}>Register</button>
+          <button type="button" onClick={handleClick}>Login</button>
+        </div>
+        <div className="redirectButton">
+          <p>
+            New to Otaku World?
+            <button type="button" onClick={register}>Register</button>
+          </p>
+        </div>
       </div>
     </div>
   );

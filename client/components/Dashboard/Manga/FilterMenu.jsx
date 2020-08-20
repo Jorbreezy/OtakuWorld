@@ -15,7 +15,7 @@ const FilterMenu = ({
   const [state, setState] = useState({
     query: '',
     genreArr: [],
-    type: ['Manga', 'Webtoon', 'Manhwa'],
+    type: ['Manga', 'Webtoon', 'Manhua'],
     status: ['Completed', 'Ongoing'],
   });
 
@@ -23,7 +23,6 @@ const FilterMenu = ({
     apiRequest('/manga/genre')
       .then((res) => res.json())
       .then((res) => {
-        console.log(res);
         setState({ ...state, genreArr: res });
       })
       .catch((err) => console.log(err));

@@ -16,7 +16,7 @@ const Form = () => {
       thumbnail: '',
       type: 1,
     },
-    type: ['Manga', 'Webtoon', 'Manhwa'],
+    type: ['Manga', 'Webtoon', 'Manhua'],
     status: ['Completed', 'Ongoing'],
     genre: [],
   });
