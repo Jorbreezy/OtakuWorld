@@ -49,5 +49,50 @@ exports.seed = (knex) => {
           manga_id: 3,
           genre_id: 4,
         },
+        {
+          id: 10,
+          manga_id: 4,
+          genre_id: 1,
+        },
+        {
+          id: 11,
+          manga_id: 4,
+          genre_id: 2,
+        },
+        {
+          id: 12,
+          manga_id: 4,
+          genre_id: 9,
+        },
+        {
+          id: 13,
+          manga_id: 5,
+          genre_id: 1,
+        },
+        {
+          id: 14,
+          manga_id: 5,
+          genre_id: 2,
+        },
+        {
+          id: 15,
+          manga_id: 5,
+          genre_id: 5,
+        },
+        {
+          id: 16,
+          manga_id: 6,
+          genre_id: 1,
+        },
+        {
+          id: 17,
+          manga_id: 6,
+          genre_id: 2,
+        },
+        {
+          id: 18,
+          manga_id: 6,
+          genre_id: 9,
+        },
       ]));
 };

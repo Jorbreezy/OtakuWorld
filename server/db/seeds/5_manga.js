@@ -47,5 +47,51 @@ exports.seed = (knex) => {
           status: 2,
           type: 1,
         },
+        {
+          id: 4,
+          title: 'Maou Gakuin no Futekigousha',
+          author: 'Shuu',
+          description: `The demon lord of tyranny, Anoth, destroyed humans, spirits, and even gods.
+          But, growing tired of the neverending war, he dreams of a peaceful world and chooses to reincarnate.
+          Unfortunately, two thousand years in the future, his descendants have become weak from the years of peace, and magic has atrophied.
+          Anoth enrolls in a "Demon Lord Academy" dedicated to finding him - the demon lord's reincarnation - but the academy fails to recognize his strength,
+          and labels him as unqualified. 
+          Amidst those who underestimate him, along with his single ally Misha, this demon lord unqualified as a demon lord will race up the demonfolk hierarchy!`,
+          thumbnail: 'https://mangadex.org/images/manga/31962.jpg?1594191037',
+          chapters: 20,
+          status: 2,
+          type: 1,
+        },
+        {
+          id: 5,
+          title: 'Solo Leveling',
+          author: 'Chugong 추공',
+          description: `10 years ago, after “the Gate” that connected the real world with the monster world opened, some of the ordinary, everyday people received the power to hunt monsters within the Gate.
+          They are known as "Hunters". However, not all Hunters are powerful. My name is Sung Jin-Woo, an E-rank Hunter. 
+          I'm someone who has to risk his life in the lowliest of dungeons, the "World's Weakest". 
+          Having no skills whatsoever to display, 
+          I barely earned the required money by fighting in low-leveled dungeons… at least until I found a hidden dungeon with the hardest difficulty within the D-rank dungeons! 
+          In the end, as I was accepting death, I suddenly received a strange power,
+          a quest log that only I could see, a secret to leveling up that only I know about! If I trained in accordance with my quests and hunted monsters, 
+          my level would rise. Changing from the weakest Hunter to the strongest S-rank Hunter!`,
+          thumbnail: 'https://mangadex.org/images/manga/31477.jpeg?1596241657',
+          chapters: 115,
+          status: 2,
+          type: 2,
+        },
+        {
+          id: 6,
+          title: 'Tales of Demons and Gods',
+          author: 'Fuse',
+          description: `Nie Li, the strongest Demon Spiritist in his past life standing at the pinnacle of the martial world. 
+          However, he lost his life during the battle with Sage Emperor and the six deity ranked beast, his soul was then reborn back in time back to when he is still 13. 
+          Although he's the weakest in his class with the lowest talent at only Red soul realm, but with the aid of the vast knowledge which he accumulated from his previous life, 
+          he trained faster then anyone. Trying to protect the city which in the coming future was being assaulted by beast and ended up being destroyed as well as protecting his lover, 
+          friends and family who died by the beast assault. And to destroy the Sacred family whom abandon their duty and betrayed city in his past life.`,
+          thumbnail: 'https://www.anime-planet.com/images/manga/covers/yaoshenji-novel-17531.jpg?t=1440366082',
+          chapters: 492,
+          status: 2,
+          type: 3,
+        },
       ]));
 };
