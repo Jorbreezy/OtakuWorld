@@ -1,12 +1,14 @@
-const { DB_PASSWORD, DB_USER } = process.env;
+const {
+  DB_PASSWORD, DB_USER, CLIENT, DB_HOST, DATABASE,
+} = process.env;
 
 const pg = require('knex')({
-  client: 'pg',
+  client: CLIENT,
   connection: {
-    host: '127.0.0.1',
+    host: DB_HOST,
     user: DB_USER,
     password: DB_PASSWORD,
-    database: 'OtakuWorld',
+    database: DATABASE,
   },
   searchPath: ['knex', 'public'],
 });
