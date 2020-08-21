@@ -23,6 +23,10 @@
   border-radius: 4px;
   outline: none;
   vertical-align:middle;
+  border: #60728b;
+  background-color: #60728b;
+  color: #bbe1fa;
+  font-size: 1.25rem;
 }
 
 .filterItem:nth-child(5) {

@@ -36,6 +36,41 @@ const FilterMenu = ({
   const statusOptions = state.status.map((value) => ({ value, label: value }));
   const typeOptions = state.type.map((value) => ({ value, label: value }));
 
+  const CustomStyle = {
+    control: (styles) => ({
+      ...styles, backgroundColor: '#60728b', border: '#60728b', color: '#bbe1fa',
+    }),
+    menu: (styles) => ({ ...styles, backgroundColor: '#60728b', color: '#bbe1fa' }),
+    option: (styles, {
+      isDisabled, isFocused,
+    }) => {
+      const color = '#808080';
+      return {
+        ...styles,
+        backgroundColor: isFocused ? color : '#60728b',
+        cursor: isDisabled ? 'not-allowed' : 'pointer',
+        color: '#bbe1fa',
+      };
+    },
+    placeholder: (defaultStyles) => ({
+      ...defaultStyles,
+      color: '#bbe1fa',
+    }),
+    singleValue: (styles) => ({ ...styles, color: '#bbe1fa' }),
+    multiValue: (styles) => ({
+      ...styles,
+      backgroundColor: '#8999ae',
+    }),
+    multiValueRemove: (styles, { data }) => ({
+      ...styles,
+      color: data.color,
+      ':hover': {
+        backgroundColor: '#ae8999',
+        color: '#996b7f',
+      },
+    }),
+  };
+
   return (
     <div className="filter">
       <div className="filterItem">
@@ -56,6 +91,7 @@ const FilterMenu = ({
           onChange={(e) => (e !== null ? setGenre(e) : setGenre([]))}
           placeholder="Search by Genre..."
           isClearable
+          styles={CustomStyle}
         />
       </div>
       <div className="filterItem">
@@ -64,6 +100,7 @@ const FilterMenu = ({
           onChange={(e) => (e != null ? setStatus(e.value) : setStatus(''))}
           placeholder="Select Status..."
           isClearable
+          styles={CustomStyle}
         />
       </div>
       <div className="filterItem">
@@ -72,6 +109,7 @@ const FilterMenu = ({
           onChange={(e) => (e != null ? setType(e.value) : setType(''))}
           placeholder="Select Type..."
           isClearable
+          styles={CustomStyle}
         />
       </div>
       <div className="filterItem">

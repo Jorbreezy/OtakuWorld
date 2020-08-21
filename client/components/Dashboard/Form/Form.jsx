@@ -86,6 +86,41 @@ const Form = () => {
   const statusOptions = state.status.map((value, key) => ({ value: key + 1, label: value }));
   const typeOptions = state.type.map((value, key) => ({ value: key + 1, label: value }));
 
+  const CustomStyle = {
+    control: (styles) => ({
+      ...styles, backgroundColor: '#60728b', border: '#60728b', color: '#bbe1fa',
+    }),
+    menu: (styles) => ({ ...styles, backgroundColor: '#60728b', color: '#bbe1fa' }),
+    option: (styles, {
+      isDisabled, isFocused,
+    }) => {
+      const color = '#808080';
+      return {
+        ...styles,
+        backgroundColor: isFocused ? color : '#60728b',
+        cursor: isDisabled ? 'not-allowed' : 'pointer',
+        color: '#bbe1fa',
+      };
+    },
+    placeholder: (defaultStyles) => ({
+      ...defaultStyles,
+      color: '#bbe1fa',
+    }),
+    singleValue: (styles) => ({ ...styles, color: '#bbe1fa' }),
+    multiValue: (styles) => ({
+      ...styles,
+      backgroundColor: '#8999ae',
+    }),
+    multiValueRemove: (styles, { data }) => ({
+      ...styles,
+      color: data.color,
+      ':hover': {
+        backgroundColor: '#ae8999',
+        color: '#996b7f',
+      },
+    }),
+  };
+
   return (
     <div className="formWrapper">
       <div className="form">
@@ -115,14 +150,14 @@ const Form = () => {
         </label>
         <label htmlFor="Status">
           Status:
-          <div className="formInputDiv">
-            <Select options={statusOptions} onChange={setStatus} />
+          <div className="formInputDiv rSelect">
+            <Select options={statusOptions} onChange={setStatus} styles={CustomStyle} />
           </div>
         </label>
         <label htmlFor="Genre">
           Genre:
-          <div className="formInputDiv">
-            <Select options={options} isMulti isSearchable onChange={setGenre} />
+          <div className="formInputDiv rSelect">
+            <Select options={options} isMulti isSearchable onChange={setGenre} styles={CustomStyle} />
           </div>
         </label>
         <label htmlFor="thumbnail">
@@ -133,10 +168,11 @@ const Form = () => {
         </label>
         <label htmlFor="type">
           Type:
-          <div className="formInputDiv">
+          <div className="formInputDiv rSelect">
             <Select
               options={typeOptions}
               onChange={setType}
+              styles={CustomStyle}
             />
           </div>
         </label>

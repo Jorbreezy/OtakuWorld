@@ -78,7 +78,7 @@ const List = ({ match }) => {
   };
 
   return (
-    <div className="itemContainer">
+    <>
       <FilterMenu
         setQuery={setQuery}
         setGenre={setGenre}
@@ -87,18 +87,20 @@ const List = ({ match }) => {
         getData={get}
         searchParam={searchParams}
       />
-      <div className="listWrapper">
-        {state.data.map(({ thumbnail, title, id }) => (
-          <Card
-            thumbnail={thumbnail}
-            title={title}
-            key={id}
-            id={id}
-            clickHandler={clickHandler}
-          />
-        ))}
+      <div className="itemContainer">
+        <div className="listWrapper">
+          {state.data.map(({ thumbnail, title, id }) => (
+            <Card
+              thumbnail={thumbnail}
+              title={title}
+              key={id}
+              id={id}
+              clickHandler={clickHandler}
+            />
+          ))}
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 

@@ -5,12 +5,14 @@
   "main": "./server/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon ./server/index.js",
+    "start": "node ./server/index.js",
+    "dev" : "nodemon ./server/index.js",
     "webdev": "webpack-dev-server --open --env.NODE_ENV=development",
-    "concurrent": "npm run start && npm run webdev",
+    "concurrent": "concurrently \"npm run dev\"  \"npm run webdev\"",
     "build": "webpack --env.NODE_ENV=production",
     "db:migrate": "npx knex migrate:latest",
-    "db:seed": "npx knex seed:run"
+    "db:seed": "npx knex seed:run",
+    "db:setup": "concurrently \"npm run db:migrate\"  \"npm run db:seed\""
   },
   "repository": {
     "type": "git",
@@ -24,6 +26,7 @@
   "homepage": "https://github.com/Jorbreezy/AnimeWorld-V2#readme",
   "dependencies": {
     "bcryptjs": "^2.4.3",
+    "concurrently": "^5.3.0",
     "cookie-parser": "^1.4.5",
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
