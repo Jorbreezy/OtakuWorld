@@ -3,7 +3,7 @@ import { PropTypes } from 'prop-types';
 import Select from 'react-select';
 import apiRequest from '../../Authentication/Util';
 
-import '../../../styles/filter.css';
+import '../../styles/filter.css';
 
 const FilterMenu = ({
   setQuery,

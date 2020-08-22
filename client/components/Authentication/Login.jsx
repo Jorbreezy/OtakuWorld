@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import apiRequest from './Util';
-import '../../styles/login.css';
+import '../styles/login.css';
 
 const Login = () => {
   const [state, setState] = useState({

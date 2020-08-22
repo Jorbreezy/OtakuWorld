@@ -2,7 +2,7 @@
 /* eslint-disable max-len */
 import React, { useState, useEffect } from 'react';
 import Select from 'react-select';
-import '../../../styles/form.css';
+import '../../styles/form.css';
 import apiRequest from '../../Authentication/Util';
 
 const Form = () => {

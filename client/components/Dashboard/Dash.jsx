@@ -5,7 +5,6 @@ import {
 
 import Nav from '../NavBar/Nav';
 import List from './List';
-// import Reading from './Manga/UsersManga';
 import Form from './Form/Form';
 import Detail from './Manga/Detail';
 

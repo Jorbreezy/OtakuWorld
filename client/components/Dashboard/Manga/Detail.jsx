@@ -4,7 +4,7 @@ import { AiFillHeart, AiOutlineHeart } from 'react-icons/ai';
 import apiRequest from '../../Authentication/Util';
 import Stars from '../Rating/Stars';
 
-import '../../../styles/detail.css';
+import '../../styles/detail.css';
 
 const Detail = ({ match }) => {
   const [state, setState] = useState({});
