@@ -14,7 +14,7 @@ const Detail = ({ match }) => {
   const details = async () => {
     setTimeout(() => {
       setLoading(false);
-    }, 200);
+    }, 100);
 
     apiRequest(`/manga/${match.params.id}`)
       .then((res) => res.json())

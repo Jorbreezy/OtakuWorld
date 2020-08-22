@@ -16,11 +16,16 @@ const List = ({ match }) => {
   const [genre, setGenre] = useState([]);
   const [status, setStatus] = useState('');
   const [type, setType] = useState('');
+  const [isLoading, setLoading] = useState(true);
   const path = match.path.split('/')[1];
 
   const history = useHistory();
 
   const get = (params = '') => {
+    setTimeout(() => {
+      setLoading(false);
+    }, 100);
+
     if (path === 'favorite') {
       apiRequest(`/user/favorite${params}`)
         .then((res) => {
@@ -61,6 +66,10 @@ const List = ({ match }) => {
   const clickHandler = (e, title, id) => {
     history.push(`/${path}/${id}/${title.replace(/\s/g, '+')}`);
   };
+
+  if (isLoading) {
+    return 'Loading....';
+  }
 
   const searchParams = () => {
     const search = new URLSearchParams();

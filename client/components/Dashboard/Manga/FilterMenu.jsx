@@ -44,7 +44,7 @@ const FilterMenu = ({
     option: (styles, {
       isDisabled, isFocused,
     }) => {
-      const color = '#808080';
+      const color = '#6699cc';
       return {
         ...styles,
         backgroundColor: isFocused ? color : '#60728b',

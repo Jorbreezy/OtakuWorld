@@ -51,7 +51,7 @@ ul li a:hover {
 
 #header {
   display: flex;
-  min-height: 6vh;
+  max-height: 8vh;
   width: 100%;
   border-bottom: 1px solid;  
   flex-wrap: wrap; 

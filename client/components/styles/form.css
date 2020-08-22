@@ -8,7 +8,8 @@
   box-sizing: border-box;
   background-color: #60728b;
   color: #bbe1fa;
-  font-size: 1.25rem;
+  font-size: 1rem;
+  outline: none;
 }
 .formInputDiv {
   width: 100%;
@@ -42,15 +43,16 @@
   display: flex;
   width: 100%;
   justify-content: center;
+  margin: 3rem auto;
 }
 
 .formWrapper label {
-  font-size: 1.25rem;
+  font-size: 1rem;
   margin-bottom: 5px;
 }
 
 textarea {
-  height: 300px;
+  height: 150px;
   background-color: #60728b;
   border: #414d5e;
 }
