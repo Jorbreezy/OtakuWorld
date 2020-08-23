@@ -15,7 +15,7 @@ const FilterMenu = ({
 }) => {
   const [state, setState] = useState({
     query: '',
-    genreArr: [],
+    genres: [],
     type: ['Manga', 'Webtoon', 'Manhua'],
     status: ['Completed', 'Ongoing'],
   });
@@ -24,7 +24,7 @@ const FilterMenu = ({
     apiRequest('/api/manga/genre')
       .then((res) => res.json())
       .then((res) => {
-        setState({ ...state, genreArr: res });
+        setState({ ...state, genres: res });
       })
       .catch((err) => console.error(err));
   };
@@ -33,7 +33,7 @@ const FilterMenu = ({
     getGenre();
   }, []);
 
-  const gOptions = state.genreArr.map(({ genre: value }) => ({ label: value, value }));
+  const gOptions = state.genres.map(({ genre: value }) => ({ label: value, value }));
   const statusOptions = state.status.map((value) => ({ value, label: value }));
   const typeOptions = state.type.map((value) => ({ value, label: value }));
 
