@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import apiRequest from './Util';
+import apiRequest from './apiRequest';
+
+import './styles/auth.css';
 
 const Register = () => {
   const [state, setState] = useState({
     username: '',
     password: '',
     confirmPassword: '',
-    err: '',
+    error: '',
   });
 
   const history = useHistory();
@@ -24,33 +26,26 @@ const Register = () => {
     if (password !== confirmPassword) {
       setState({ err: 'Password does not match!' });
     } else {
-      apiRequest('/auth/register', {
+      apiRequest('/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password }),
       })
-        .then((res) => {
+        .then(async (res) => {
           if (res.status !== 200) {
-            setState({ warning: res.message });
-          } else {
-            history.push('/discover');
+            setState({ error: (await res.json()).message });
+            return;
           }
+          history.push('/discover');
         })
-        .catch((err) => console.log(err));
+        .catch((err) => console.error(err));
     }
-  };
-
-  const login = () => {
-    history.push('/login');
   };
 
   return (
     <div className="loginDiv">
       <div className="container">
-        <div>
-          <h2>Register</h2>
-        </div>
-
+        <h2>Register</h2>
         <div className="inputWrapper">
           <h3>Username</h3>
           <input type="text" placeholder="Enter Username" id="username" name="username" onChange={handleChange} />
@@ -61,14 +56,14 @@ const Register = () => {
           <h3>Confirm password</h3>
           <input type="password" placeholder="Confirm Password" id="confirmPassword" name="cpsw" onChange={handleChange} />
 
-          <p className="authError">{ state.err }</p>
+          <p className="authError">{ state.error }</p>
 
           <button type="button" onClick={handleClick}>Create Account</button>
         </div>
         <div className="redirectButton">
           <p>
             Have an account?
-            <button type="button" onClick={login}>Login</button>
+            <a href="/login"> Login</a>
           </p>
         </div>
       </div>

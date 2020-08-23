@@ -1,244 +1,260 @@
 const knexDb = require('../db/knexDb');
 
-const mangaController = {
-  getAllByUser: async (req, res, next) => {
-    const {
-      genre, type, title, status,
-    } = req.query;
+exports.getAllByUser = async (req, res, next) => {
+  const {
+    genre, type, title, status,
+  } = req.query;
 
-    const { user } = res.locals;
+  const { user } = res.locals;
 
-    const mangaQuery = knexDb
-      .select('manga.*', 'status.status AS status', 'type.type As type', 'g.genre AS genre', 'user_manga.current_chapter AS current_chapter', 'user_manga.user_id')
-      .from('manga')
-      .leftJoin('status', 'manga.status', 'status.id')
+  const mangaQuery = knexDb
+    .select('manga.*', 'status.status AS status', 'type.type As type', 'g.genre AS genres', 'user_manga.current_chapter AS current_chapter', 'user_manga.user_id')
+    .from('manga')
+    .leftJoin('status', 'manga.status', 'status.id')
+    .leftJoin('user_manga', 'manga.id', 'user_manga.manga_id')
+    .leftJoin('type', 'manga.type', 'type.id')
+    .leftJoin(knexDb
+      .select(knexDb.raw('string_agg(genre.genre, \',\') AS genre'), 'manga_genre.manga_id')
+      .from('genre')
+      .innerJoin('manga_genre', 'genre.id', 'manga_genre.genre_id')
+      .groupBy('manga_genre.manga_id')
+      .as('g'),
+    'manga.id',
+    'g.manga_id')
+    .where('user_manga.user_id', user.id);
+
+  if (genre) {
+    const genres = Array.isArray(genre) ? genre : [genre];
+
+    const genreSubQuery = knexDb
+      .select('manga_genre.manga_id as manga_id')
+      .from('manga_genre')
+      .leftJoin('genre', 'manga_genre.genre_id', 'genre.id')
+      .groupBy('manga_genre.manga_id')
+      .having(knexDb.raw('count(manga_genre.manga_id)'), '=', genres.length)
+      .whereIn('genre.genre', genres);
+
+    mangaQuery.whereIn('manga.id', genreSubQuery);
+  }
+
+  if (type) {
+    mangaQuery.where('type.type', 'ilike', `%${type}%`);
+  }
+
+  if (status) {
+    mangaQuery.where('status.status', 'ilike', `%${status}%`);
+  }
+
+  if (title) {
+    mangaQuery.where('title', 'ilike', `%${title}%`);
+  }
+
+  mangaQuery.orderBy('manga.id');
+
+  const mangas = await mangaQuery;
+
+  res.locals.allManga = mangas.map((manga) => ({ ...manga, genres: manga.genres.split(',') }));
+
+  res.locals.manga = await mangaQuery;
+
+  return next();
+};
+
+exports.getOneById = async (req, res, next) => {
+  const { id } = req.params;
+  const { user } = res.locals;
+
+  const mangaQuery = knexDb
+    .from('manga')
+    .select('manga.*', 'status.status AS status', 'type.type As type', 'g.genre AS genre', 'r.rating AS rating');
+
+  if (user) {
+    mangaQuery.select(knexDb.raw('user_manga.user_id = ? as is_favorite, user_manga.current_chapter', user.id))
       .leftJoin('user_manga', 'manga.id', 'user_manga.manga_id')
-      .leftJoin('type', 'manga.type', 'type.id')
-      .leftJoin(knexDb
-        .select(knexDb.raw('string_agg(genre.genre, \',\') AS genre'), 'manga_genre.manga_id')
-        .from('genre')
-        .innerJoin('manga_genre', 'genre.id', 'manga_genre.genre_id')
-        .groupBy('manga_genre.manga_id')
-        .as('g'),
-      'manga.id',
-      'g.manga_id')
-      .where('user_manga.user_id', user.id);
+      .orderByRaw('case when user_manga.user_id = ? then 0 else 1 end', user.id);
+  }
 
-    if (genre) {
-      const genres = Array.isArray(genre) ? genre : [genre];
+  mangaQuery.leftJoin('status', 'manga.status', 'status.id')
+    .leftJoin('type', 'manga.type', 'type.id')
+    .leftJoin(knexDb
+      .select(knexDb.raw('avg(rating.rating) as rating'), 'rating.manga_id')
+      .from('rating')
+      .as('r')
+      .groupBy('rating.manga_id'),
+    'manga.id',
+    'r.manga_id')
+    .leftJoin(knexDb
+      .select(knexDb.raw('string_agg(genre.genre, \',\') AS genre'), 'manga_genre.manga_id')
+      .from('genre')
+      .innerJoin('manga_genre', 'genre.id', 'manga_genre.genre_id')
+      .groupBy('manga_genre.manga_id')
+      .as('g'),
+    'manga.id',
+    'g.manga_id')
+    .where('manga.id', id)
+    .first();
 
-      const genreSubQuery = knexDb
-        .select('manga_genre.manga_id as manga_id')
-        .from('manga_genre')
-        .leftJoin('genre', 'manga_genre.genre_id', 'genre.id')
-        .groupBy('manga_genre.manga_id')
-        .having(knexDb.raw('count(manga_genre.manga_id)'), '=', genres.length)
-        .whereIn('genre.genre', genres);
+  const manga = await mangaQuery;
 
-      mangaQuery.whereIn('manga.id', genreSubQuery);
-    }
+  res.locals.getOne = {
+    ...manga,
+    genres: manga.genre.split(','),
+  };
 
-    if (type) {
-      mangaQuery.where('type.type', 'ilike', `%${type}%`);
-    }
+  return next();
+};
 
-    if (status) {
-      mangaQuery.where('status.status', 'ilike', `%${status}%`);
-    }
+exports.addOne = async (req, res, next) => {
+  const { user } = res.locals;
 
-    if (title) {
-      mangaQuery.where('title', 'ilike', `%${title}%`);
-    }
+  const {
+    title,
+    description,
+    chapters,
+    author,
+    type,
+    status,
+    thumbnail,
+    genres,
+  } = req.body;
 
-    mangaQuery.orderBy('manga.id');
+  await knexDb('manga')
+    .insert({
+      title, description, chapters, author, type, status, thumbnail,
+    })
+    .returning('id')
+    .then((data) => {
+      const id = data[0];
 
-    res.locals.manga = await mangaQuery;
+      const insertGenre = genres.split(',').map((value) => ({ manga_id: id, genre_id: parseInt(value, 10) }));
 
-    return next();
-  },
-  getOneById: async (req, res, next) => {
-    const { id } = req.params;
-    const { user } = res.locals;
+      knexDb('manga_genre')
+        .insert(insertGenre)
+        .then(() => {})
+        .catch((err) => next(err));
 
-    const mangaQuery = knexDb
-      .from('manga')
-      .select('manga.*', 'status.status AS status', 'type.type As type', 'g.genre AS genre', 'r.rating AS rating');
+      knexDb('user_manga')
+        .insert({ manga_id: id, user_id: user.id })
+        .then(() => {})
+        .catch((err) => next(err));
+    })
+    .catch((err) => next(err));
 
-    if (user) {
-      mangaQuery.select(knexDb.raw('user_manga.user_id = ? as is_favorite, user_manga.current_chapter', user.id))
-        .leftJoin('user_manga', 'manga.id', 'user_manga.manga_id')
-        .orderByRaw('case when user_manga.user_id = ? then 0 else 1 end', user.id);
-    }
+  return next();
+};
 
-    mangaQuery.leftJoin('status', 'manga.status', 'status.id')
-      .leftJoin('type', 'manga.type', 'type.id')
-      .leftJoin(knexDb
-        .select(knexDb.raw('avg(rating.rating) as rating'), 'rating.manga_id')
-        .from('rating')
-        .as('r')
-        .groupBy('rating.manga_id'),
-      'manga.id',
-      'r.manga_id')
-      .leftJoin(knexDb
-        .select(knexDb.raw('string_agg(genre.genre, \',\') AS genre'), 'manga_genre.manga_id')
-        .from('genre')
-        .innerJoin('manga_genre', 'genre.id', 'manga_genre.genre_id')
-        .groupBy('manga_genre.manga_id')
-        .as('g'),
-      'manga.id',
-      'g.manga_id')
-      .where('manga.id', id)
-      .first();
+exports.getAll = async (req, res, next) => {
+  const {
+    genre, type, title, status,
+  } = req.query;
 
-    res.locals.getOne = await mangaQuery;
+  const mangaQuery = knexDb
+    .select('manga.*', 'status.status AS status', 'type.type As type', 'g.genre AS genres')
+    .from('manga')
+    .leftJoin('status', 'manga.status', 'status.id')
+    .leftJoin('type', 'manga.type', 'type.id')
+    .leftJoin(knexDb
+      .select(knexDb.raw('string_agg(genre.genre, \',\') AS genre'), 'manga_genre.manga_id')
+      .from('genre')
+      .innerJoin('manga_genre', 'genre.id', 'manga_genre.genre_id')
+      .groupBy('manga_genre.manga_id')
+      .as('g'),
+    'manga.id',
+    'g.manga_id');
 
-    return next();
-  },
-  addOne: async (req, res, next) => {
-    const { user } = res.locals;
+  if (genre) {
+    const genres = Array.isArray(genre) ? genre : [genre];
 
-    const {
-      title,
-      description,
-      chapters,
-      author,
-      type,
-      status,
-      thumbnail,
-      genre,
-    } = req.body;
+    const genreSubQuery = knexDb
+      .select('manga_genre.manga_id as manga_id')
+      .from('manga_genre')
+      .leftJoin('genre', 'manga_genre.genre_id', 'genre.id')
+      .groupBy('manga_genre.manga_id')
+      .having(knexDb.raw('count(manga_genre.manga_id)'), '=', genres.length)
+      .whereIn('genre.genre', genres);
 
-    await knexDb('manga')
-      .insert({
-        title, description, chapters, author, type, status, thumbnail,
-      })
-      .returning('id')
-      .then((data) => {
-        const id = data[0];
+    mangaQuery.whereIn('manga.id', genreSubQuery);
+  }
 
-        const insertGenre = genre.split(',').map((value) => ({ manga_id: id, genre_id: parseInt(value, 10) }));
+  if (type) {
+    mangaQuery.where('type.type', 'ilike', `%${type}%`);
+  }
 
-        knexDb('manga_genre')
-          .insert(insertGenre)
-          .then(() => {})
-          .catch((err) => next(err));
+  if (status) {
+    mangaQuery.where('status.status', 'ilike', `%${status}%`);
+  }
 
-        knexDb('user_manga')
-          .insert({ manga_id: id, user_id: user.id })
-          .then(() => {})
-          .catch((err) => next(err));
-      })
-      .catch((err) => next(err));
+  if (title) {
+    mangaQuery.where('title', 'ilike', `%${title}%`);
+  }
 
-    return next();
-  },
-  getAll: async (req, res, next) => {
-    const {
-      genre, type, title, status,
-    } = req.query;
+  mangaQuery.orderBy('manga.id');
+  const mangas = await mangaQuery;
 
-    const mangaQuery = knexDb
-      .select('manga.*', 'status.status AS status', 'type.type As type', 'g.genre AS genre')
-      .from('manga')
-      .leftJoin('status', 'manga.status', 'status.id')
-      .leftJoin('type', 'manga.type', 'type.id')
-      .leftJoin(knexDb
-        .select(knexDb.raw('string_agg(genre.genre, \',\') AS genre'), 'manga_genre.manga_id')
-        .from('genre')
-        .innerJoin('manga_genre', 'genre.id', 'manga_genre.genre_id')
-        .groupBy('manga_genre.manga_id')
-        .as('g'),
-      'manga.id',
-      'g.manga_id');
+  res.locals.allManga = mangas.map((manga) => ({ ...manga, genres: manga.genres.split(',') }));
 
-    if (genre) {
-      const genres = Array.isArray(genre) ? genre : [genre];
+  return next();
+};
 
-      const genreSubQuery = knexDb
-        .select('manga_genre.manga_id as manga_id')
-        .from('manga_genre')
-        .leftJoin('genre', 'manga_genre.genre_id', 'genre.id')
-        .groupBy('manga_genre.manga_id')
-        .having(knexDb.raw('count(manga_genre.manga_id)'), '=', genres.length)
-        .whereIn('genre.genre', genres);
+exports.getGenre = async (req, res, next) => {
+  const genreQuery = knexDb
+    .select('*')
+    .from('genre');
 
-      mangaQuery.whereIn('manga.id', genreSubQuery);
-    }
+  res.locals.genre = await genreQuery;
 
-    if (type) {
-      mangaQuery.where('type.type', 'ilike', `%${type}%`);
-    }
+  return next();
+};
 
-    if (status) {
-      mangaQuery.where('status.status', 'ilike', `%${status}%`);
-    }
+exports.favorite = (req, res, next) => {
+  const { mangaId } = req.body;
+  const { user } = res.locals;
 
-    if (title) {
-      mangaQuery.where('title', 'ilike', `%${title}%`);
-    }
+  knexDb('user_manga')
+    .insert({ manga_id: mangaId, user_id: user.id })
+    .then(() => {})
+    .catch((err) => next(err));
 
-    mangaQuery.orderBy('manga.id');
+  return next();
+};
 
-    res.locals.allManga = await mangaQuery;
+exports.unfavorite = (req, res, next) => {
+  const { mangaId } = req.body;
+  const { user } = res.locals;
 
-    return next();
-  },
-  getGenre: async (req, res, next) => {
-    const genreQuery = knexDb
-      .select('*')
-      .from('genre');
+  knexDb('user_manga')
+    .del()
+    .where({ manga_id: mangaId, user_id: user.id })
+    .then(() => {})
+    .catch((err) => next(err));
 
-    res.locals.genre = await genreQuery;
+  return next();
+};
 
-    return next();
-  },
-  favorite: (req, res, next) => {
-    const { mangaId } = req.body;
-    const { user } = res.locals;
+exports.updateChapter = (req, res, next) => {
+  const { currentChapter } = req.body;
+  const { id } = req.params;
+  const { user } = res.locals;
 
-    knexDb('user_manga')
-      .insert({ manga_id: mangaId, user_id: user.id })
-      .then(() => {})
-      .catch((err) => next(err));
+  knexDb('user_manga')
+    .update('current_chapter', currentChapter)
+    .where({ manga_id: id, user_id: user.id })
+    .then(() => {})
+    .catch((err) => next(err));
 
-    return next();
-  },
-  unfavorite: (req, res, next) => {
-    const { mangaId } = req.body;
-    const { user } = res.locals;
+  return next();
+};
 
-    knexDb('user_manga')
-      .del()
-      .where({ manga_id: mangaId, user_id: user.id })
-      .then(() => {})
-      .catch((err) => next(err));
+exports.rate = (req, res, next) => {
+  const { id, rating } = req.body;
+  const { user } = res.locals;
 
-    return next();
-  },
-  updateChapter: (req, res, next) => {
-    const { currentChapter } = req.body;
-    const { id } = req.params;
-    const { user } = res.locals;
+  knexDb('rating')
+    .insert({ manga_id: id, user_id: user.id, rating })
+    .then(() => {})
+    .catch((err) => next(err));
 
-    knexDb('user_manga')
-      .update('current_chapter', currentChapter)
-      .where({ manga_id: id, user_id: user.id })
-      .then(() => {})
-      .catch((err) => next(err));
-
-    return next();
-  },
-  rate: (req, res, next) => {
-    const { id, rating } = req.body;
-    const { user } = res.locals;
-
-    knexDb('rating')
-      .insert({ manga_id: id, user_id: user.id, rating })
-      .then(() => {})
-      .catch((err) => next(err));
-
-    return next();
-  },
+  return next();
 };
 
 /*
@@ -303,5 +319,3 @@ CREATE TABLE rating (
 )
 
 */
-
-module.exports = mangaController;

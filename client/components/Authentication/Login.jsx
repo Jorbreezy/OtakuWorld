@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import apiRequest from './Util';
-import '../styles/login.css';
+import apiRequest from './apiRequest';
+import './styles/auth.css';
 
 const Login = () => {
   const [state, setState] = useState({
     username: '',
     password: '',
-    warning: '',
+    error: '',
   });
 
   const history = useHistory();
@@ -19,32 +19,25 @@ const Login = () => {
   const handleClick = () => {
     const { username, password } = state;
 
-    apiRequest('/auth/login', {
+    apiRequest('/api/auth/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username, password }),
     })
-      .then((res) => {
+      .then(async (res) => {
         if (res.status !== 200) {
-          setState({ warning: res.message });
-        } else {
-          history.push('/discover');
+          setState({ error: (await res.json()).message });
+          return;
         }
+        history.push('/discover');
       })
-      .catch((err) => console.log(err));
-  };
-
-  const register = () => {
-    history.push('/register');
+      .catch((err) => console.error('Err: ', err));
   };
 
   return (
     <div className="loginDiv">
       <div className="container">
-        <div>
-          <h2>Login</h2>
-        </div>
-
+        <h2>Login</h2>
         <div className="inputWrapper">
           <h3>Username</h3>
           <input type="text" placeholder="Enter Username" id="username" name="username" onChange={handleChange} />
@@ -52,14 +45,14 @@ const Login = () => {
           <h3>Password</h3>
           <input type="password" placeholder="Enter Password" id="password" name="psw" onChange={handleChange} />
 
-          <p className="authError">{ state.err }</p>
+          <p className="authError">{ state.error }</p>
 
           <button type="button" onClick={handleClick}>Login</button>
         </div>
         <div className="redirectButton">
           <p>
             New to Otaku World?
-            <button type="button" onClick={register}>Register</button>
+            <a href="/register"> Register</a>
           </p>
         </div>
       </div>

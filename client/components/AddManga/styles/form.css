@@ -3,10 +3,10 @@
   padding: 12px 20px;
   margin: 8px 0;
   display: inline-block;
-  border: 1px solid #60728b;
+  border: 1px solid #414d5e;
   border-radius: 4px;
   box-sizing: border-box;
-  background-color: #60728b;
+  background-color: #414d5e;
   color: #bbe1fa;
   font-size: 1rem;
   outline: none;
@@ -53,8 +53,6 @@
 
 textarea {
   height: 150px;
-  background-color: #60728b;
-  border: #414d5e;
 }
 
 input::-webkit-outer-spin-button,

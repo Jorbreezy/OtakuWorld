@@ -9,7 +9,7 @@ import './components/styles/style.css';
 
 import Login from './components/Authentication/Login';
 import Register from './components/Authentication/Register';
-import Dashboard from './components/Dashboard/Dash';
+import Dashboard from './components/Dashboard/Dashboard';
 
 class App extends PureComponent {
   render() {

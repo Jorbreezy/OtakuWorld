@@ -6,6 +6,7 @@
   border-radius: 4px;
   align-items: center;
   padding-bottom: 10px;
+  padding-top: 10px;
   min-height: 5rem;
 }
 
@@ -17,14 +18,14 @@
 
 .search {
   width: 96%;
-  padding: 6px;
+  padding: 6px 8px;
   margin-right: 16px;
   font-size: 17px;
   border-radius: 4px;
   outline: none;
   vertical-align:middle;
   border: #60728b;
-  background-color: #60728b;
+  background-color: #414d5e;
   color: #bbe1fa;
   font-size: 1.25rem;
 }

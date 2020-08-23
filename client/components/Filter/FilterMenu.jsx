@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { PropTypes } from 'prop-types';
 import Select from 'react-select';
-import apiRequest from '../../Authentication/Util';
+import apiRequest from '../Authentication/apiRequest';
+import CustomStyle from '../selectStyles';
 
-import '../../styles/filter.css';
+import './styles/filter.css';
 
 const FilterMenu = ({
   setQuery,
@@ -20,12 +21,12 @@ const FilterMenu = ({
   });
 
   const getGenre = () => {
-    apiRequest('/manga/genre')
+    apiRequest('/api/manga/genre')
       .then((res) => res.json())
       .then((res) => {
         setState({ ...state, genreArr: res });
       })
-      .catch((err) => console.log(err));
+      .catch((err) => console.error(err));
   };
 
   useEffect(() => {
@@ -35,41 +36,6 @@ const FilterMenu = ({
   const gOptions = state.genreArr.map(({ genre: value }) => ({ label: value, value }));
   const statusOptions = state.status.map((value) => ({ value, label: value }));
   const typeOptions = state.type.map((value) => ({ value, label: value }));
-
-  const CustomStyle = {
-    control: (styles) => ({
-      ...styles, backgroundColor: '#60728b', border: '#60728b', color: '#bbe1fa',
-    }),
-    menu: (styles) => ({ ...styles, backgroundColor: '#60728b', color: '#bbe1fa' }),
-    option: (styles, {
-      isDisabled, isFocused,
-    }) => {
-      const color = '#6699cc';
-      return {
-        ...styles,
-        backgroundColor: isFocused ? color : '#60728b',
-        cursor: isDisabled ? 'not-allowed' : 'pointer',
-        color: '#bbe1fa',
-      };
-    },
-    placeholder: (defaultStyles) => ({
-      ...defaultStyles,
-      color: '#bbe1fa',
-    }),
-    singleValue: (styles) => ({ ...styles, color: '#bbe1fa' }),
-    multiValue: (styles) => ({
-      ...styles,
-      backgroundColor: '#8999ae',
-    }),
-    multiValueRemove: (styles, { data }) => ({
-      ...styles,
-      color: data.color,
-      ':hover': {
-        backgroundColor: '#ae8999',
-        color: '#996b7f',
-      },
-    }),
-  };
 
   return (
     <div className="filter">
@@ -88,7 +54,7 @@ const FilterMenu = ({
           options={gOptions}
           isMulti
           isSearchable
-          onChange={(e) => (e !== null ? setGenre(e) : setGenre([]))}
+          onChange={(e) => (e ? setGenre(e) : setGenre([]))}
           placeholder="Search by Genre..."
           isClearable
           styles={CustomStyle}

@@ -1,14 +1,16 @@
 import React from 'react';
 import { PropTypes } from 'prop-types';
+import './styles/card.css';
 
 const Card = ({
-  thumbnail, title, clickHandler, id,
+  thumbnail,
+  title,
+  clickHandler,
+  id,
 }) => (
-  <button type="button" className="item" onClick={(e) => clickHandler(e, title, id)}>
+  <button type="button" className="item" onClick={() => clickHandler(title, id)}>
     <div className="itemWrapper" style={{ backgroundImage: `url(${thumbnail})` }}>
       <div className="itemInfo">
-        <div className="itemTop" />
-        <div className="itemMiddle" />
         <div className="itemTitle">
           <p>{title}</p>
         </div>

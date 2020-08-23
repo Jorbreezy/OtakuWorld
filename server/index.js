@@ -24,9 +24,9 @@ app.patch('*', decodeUser);
 app.post(/^(?!.*?auth).*/, decodeUser, verifyUser);
 
 // Route handlers
-app.use('/auth', auth);
-app.use('/user', user);
-app.use('/manga', manga);
+app.use('/api/auth', auth);
+app.use('/api/user', user);
+app.use('/api/manga', manga);
 
 // Main Get Request, Send html file
 app.get('*', (req, res) => res.sendFile(path.resolve(__dirname, '../client/index.html')));

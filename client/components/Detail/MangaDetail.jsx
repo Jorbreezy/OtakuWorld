@@ -1,60 +1,59 @@
 import React, { useEffect, useState } from 'react';
 import { PropTypes } from 'prop-types';
 import { AiFillHeart, AiOutlineHeart } from 'react-icons/ai';
-import apiRequest from '../../Authentication/Util';
+import apiRequest from '../Authentication/apiRequest';
 import Stars from '../Rating/Stars';
 
-import '../../styles/detail.css';
+import './styles/detail.css';
 
-const Detail = ({ match }) => {
+const MangaDetail = ({ match }) => {
   const [state, setState] = useState({});
-  const [isFavorited, setFavorited] = useState(false);
   const [isLoading, setLoading] = useState(true);
 
-  const details = async () => {
+  const getDetails = async () => {
     setTimeout(() => {
       setLoading(false);
     }, 100);
 
-    apiRequest(`/manga/${match.params.id}`)
+    apiRequest(`/api/manga/${match.params.id}`)
       .then((res) => res.json())
       .then((res) => {
-        if (res.is_favorite) setFavorited(true);
-
         setState(res);
         return res;
-      });
+      })
+      .catch((err) => console.error(err));
   };
 
   useEffect(() => {
-    details();
+    getDetails();
   }, []);
 
   const favorite = () => {
     const { id } = state;
 
-    apiRequest('/manga/favorite', {
+    apiRequest('/api/manga/favorite', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ mangaId: id }),
     })
       .then(() => {
-        setFavorited(true);
+        setState({ ...state, is_favorite: true });
       })
-      .catch((err) => console.log(err));
+      .catch((err) => console.error(err));
   };
 
   const unFavorite = () => {
     const { id } = state;
 
-    setFavorited(false);
-
-    apiRequest('/manga/unfavorite', {
+    apiRequest('/api/manga/unfavorite', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ mangaId: id }),
     })
-      .catch((err) => console.log(err));
+      .then(() => {
+        setState({ ...state, is_favorite: false });
+      })
+      .catch((err) => console.error(err));
   };
 
   const {
@@ -68,7 +67,7 @@ const Detail = ({ match }) => {
     current_chapter: currentChapter,
   } = state;
 
-  let { genre } = state;
+  const { genres = [] } = state;
 
   if (isLoading) {
     return 'Loading....';
@@ -76,23 +75,24 @@ const Detail = ({ match }) => {
 
   const updateCurrentChapter = (value) => {
     const { id } = state;
-    apiRequest(`/user/${id}`, {
+    apiRequest(`/api/user/${id}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ currentChapter: value }),
     })
-      .catch((err) => console.log(err));
+      .catch((err) => console.error(err));
   };
 
-  genre = genre.split(',');
-
   const rate = (id, rating) => {
-    apiRequest('/manga/rate', {
+    apiRequest('/api/manga/rate', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ id, rating }),
     })
-      .catch((err) => console.log(err));
+      .then(() => {
+        setState({ ...state, rating });
+      })
+      .catch((err) => console.error(err));
   };
 
   return (
@@ -102,29 +102,26 @@ const Detail = ({ match }) => {
       </section>
       <div className="wrapper">
         <section className="info">
-          <div className="detailTitle">
-            <h1>
-              { title }
-            </h1>
-          </div>
+          <h1>
+            { title }
+          </h1>
           <div className="ratingWrap">
-            <Stars id={state.id} click={rate} rating={state.rating === null ? 0 : state.rating} />
+            <Stars id={state.id || 0} click={rate} rating={parseInt(state.rating, 10) || 0} />
           </div>
           <div className="miniBar">
             <div className="genreWrap">
-              { genre.map((g) => <p className="genre">{ g }</p>) }
+              { genres.map((g) => <p className="genre" key={g}>{ g }</p>) }
             </div>
             <div className="subscribe">
-              { isFavorited ? (
-                <div className="subscribeItem unsubscribe">
-                  <span className="unfavorite"><AiFillHeart onClick={unFavorite} /></span>
-                </div>
-              ) : (
-                <div className="subscribeItem">
-                  <span className="favorite"><AiOutlineHeart onClick={favorite} /></span>
-                </div>
-              ) }
-
+              <div className="subscribeItem">
+                <span>
+                  { state.is_favorite ? (
+                    <AiFillHeart onClick={unFavorite} />
+                  ) : (
+                    <AiOutlineHeart onClick={favorite} />
+                  ) }
+                </span>
+              </div>
             </div>
           </div>
           <div className="description">
@@ -163,7 +160,7 @@ const Detail = ({ match }) => {
                 {type}
               </h3>
             </div>
-            {isFavorited ? (
+            {state.is_favorite && (
               <div className="cardInfo">
                 <h3>
                   Current Chapter
@@ -172,16 +169,15 @@ const Detail = ({ match }) => {
                   <input
                     className="currentChapter"
                     defaultValue={currentChapter}
-                    onKeyUp={(e) => {
-                      // eslint-disable-next-line no-unused-expressions
-                      e.keyCode === 13 ? updateCurrentChapter(e.target.value) : currentChapter;
+                    onKeyUp={({ keyCode, target: { value } }) => {
+                      if (keyCode === 13) {
+                        updateCurrentChapter(value);
+                      }
                     }}
                   />
                 </div>
               </div>
-            )
-              : ''}
-
+            )}
           </section>
         </section>
       </div>
@@ -189,9 +185,11 @@ const Detail = ({ match }) => {
   );
 };
 
-Detail.propTypes = {
-  // eslint-disable-next-line react/forbid-prop-types
-  match: PropTypes.object.isRequired,
+MangaDetail.propTypes = {
+  match: PropTypes.shape({
+    params: PropTypes.shape({ id: PropTypes.string }),
+    path: PropTypes.string,
+  }).isRequired,
 };
 
-export default Detail;
+export default MangaDetail;

@@ -3,7 +3,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = (env) => ({
   mode: env.NODE_ENV,
-  entry: './client/index.js',
+  entry: './client/index.jsx',
   devServer: {
     host: 'localhost',
     port: 8080,
@@ -14,7 +14,7 @@ module.exports = (env) => ({
     headers: { 'Access-Control-Allow-Origin': '*' },
     historyApiFallback: true,
     proxy: {
-      '/(api|auth|assets|dist|manga|user)/**': {
+      '/(api|assets|dist)/**': {
         target: 'http://localhost:3000/',
         secure: false,
       },

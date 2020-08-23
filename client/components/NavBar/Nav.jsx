@@ -1,33 +1,33 @@
-/* eslint-disable jsx-a11y/click-events-have-key-events */
-/* eslint-disable jsx-a11y/no-static-element-interactions */
 import React from 'react';
 import { FiLogOut } from 'react-icons/fi';
+
+import './styles/nav.css';
 
 import {
   Link,
   useHistory,
 } from 'react-router-dom';
-import apiRequest from '../Authentication/Util';
+import apiRequest from '../Authentication/apiRequest';
 
 const Nav = () => {
   const history = useHistory();
 
   const signout = () => {
-    apiRequest('/auth/signOut', {
+    apiRequest('/api/auth/signOut', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
     })
       .then(() => {
         history.push('/login');
       })
-      .catch((err) => console.log(err));
+      .catch((err) => console.error(err));
   };
 
   return (
     <nav id="header">
-      <div className="navItem websiteName" onClick={() => history.push('/discover')}>
+      <button type="button" className="navItem websiteName" onClick={() => history.push('/discover')}>
         <h1>Otaku World</h1>
-      </div>
+      </button>
       <div className="navItem">
         <ul className="right">
           <li>

@@ -1,11 +1,11 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
-/* eslint-disable max-len */
 import React, { useState, useEffect } from 'react';
 import Select from 'react-select';
-import '../../styles/form.css';
-import apiRequest from '../../Authentication/Util';
+import CustomStyle from '../selectStyles';
+import './styles/form.css';
+import apiRequest from '../Authentication/apiRequest';
 
-const Form = () => {
+const AddManga = () => {
   const [state, setState] = useState({
     manga: {
       title: '',
@@ -21,9 +21,9 @@ const Form = () => {
     genre: [],
   });
 
-  const [genreArr, setGenre] = useState([]);
-  const [statusObj, setStatus] = useState({});
-  const [typeObj, setType] = useState({});
+  const [genres, setGenre] = useState([]);
+  const [status, setStatus] = useState(0);
+  const [type, setType] = useState(0);
 
   const handleChange = (e) => {
     const newManga = {
@@ -42,9 +42,7 @@ const Form = () => {
       thumbnail,
     } = state.manga;
 
-    const gArr = genreArr.map((obj) => obj.value).join(',');
-
-    apiRequest('/manga/add', {
+    apiRequest('/api/manga/add', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -52,10 +50,10 @@ const Form = () => {
         description,
         author,
         chapters,
-        status: statusObj.value,
+        status,
         thumbnail,
-        type: typeObj.value,
-        genre: gArr,
+        type,
+        genres,
       }),
     })
       .then((res) => {
@@ -63,20 +61,17 @@ const Form = () => {
           alert('Added Successfully');
         }
       })
-      .catch((err) => console.log(err));
+      .catch((err) => console.error(err));
   };
 
   const getGenre = () => {
-    apiRequest('/manga/genre')
+    apiRequest('/api/manga/genre')
       .then((res) => res.json())
       .then((res) => {
         setState({ ...state, genre: res });
-        return 0;
       })
-      .catch((err) => console.log(err));
+      .catch((err) => console.error(err));
   };
-
-  console.log('GenreArr: ', state.genre);
 
   useEffect(() => {
     getGenre();
@@ -85,41 +80,6 @@ const Form = () => {
   const options = state.genre.map(({ genre: label, id: value }) => ({ label, value }));
   const statusOptions = state.status.map((value, key) => ({ value: key + 1, label: value }));
   const typeOptions = state.type.map((value, key) => ({ value: key + 1, label: value }));
-
-  const CustomStyle = {
-    control: (styles) => ({
-      ...styles, backgroundColor: '#60728b', border: '#60728b', color: '#bbe1fa',
-    }),
-    menu: (styles) => ({ ...styles, backgroundColor: '#60728b', color: '#bbe1fa' }),
-    option: (styles, {
-      isDisabled, isFocused,
-    }) => {
-      const color = '#6699cc';
-      return {
-        ...styles,
-        backgroundColor: isFocused ? color : '#60728b',
-        cursor: isDisabled ? 'not-allowed' : 'pointer',
-        color: '#bbe1fa',
-      };
-    },
-    placeholder: (defaultStyles) => ({
-      ...defaultStyles,
-      color: '#bbe1fa',
-    }),
-    singleValue: (styles) => ({ ...styles, color: '#bbe1fa' }),
-    multiValue: (styles) => ({
-      ...styles,
-      backgroundColor: '#8999ae',
-    }),
-    multiValueRemove: (styles, { data }) => ({
-      ...styles,
-      color: data.color,
-      ':hover': {
-        backgroundColor: '#ae8999',
-        color: '#996b7f',
-      },
-    }),
-  };
 
   return (
     <div className="formWrapper">
@@ -151,13 +111,23 @@ const Form = () => {
         <label htmlFor="Status">
           Status:
           <div className="formInputDiv rSelect">
-            <Select options={statusOptions} onChange={setStatus} styles={CustomStyle} />
+            <Select
+              options={statusOptions}
+              onChange={(e) => setStatus(e.value)}
+              styles={CustomStyle}
+            />
           </div>
         </label>
         <label htmlFor="Genre">
           Genre:
           <div className="formInputDiv rSelect">
-            <Select options={options} isMulti isSearchable onChange={setGenre} styles={CustomStyle} />
+            <Select
+              options={options}
+              isMulti
+              isSearchable
+              onChange={setGenre}
+              styles={CustomStyle}
+            />
           </div>
         </label>
         <label htmlFor="thumbnail">
@@ -171,7 +141,7 @@ const Form = () => {
           <div className="formInputDiv rSelect">
             <Select
               options={typeOptions}
-              onChange={setType}
+              onChange={(e) => setType(e.value)}
               styles={CustomStyle}
             />
           </div>
@@ -184,4 +154,4 @@ const Form = () => {
   );
 };
 
-export default Form;
+export default AddManga;

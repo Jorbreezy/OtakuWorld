@@ -12,12 +12,13 @@ const Stars = ({ id, click, rating }) => {
       {
         stars.map((star, idx) => (
           <Star
-            // eslint-disable-next-line react/no-array-index-key
-            key={idx}
+            key={star}
             starId={idx + 1}
-            // eslint-disable-next-line no-mixed-operators
-            rating={hover && previewRating || rating}
-            onMouseEnter={() => { setPreviewRating(idx + 1); setHover(true); }}
+            rating={(hover && previewRating) || rating}
+            onMouseEnter={() => {
+              setPreviewRating(idx + 1);
+              setHover(true);
+            }}
             onMouseLeave={() => setHover(false)}
             onClick={() => click(id, previewRating)}
           />
