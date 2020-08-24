@@ -1,4 +1,4 @@
-# AnimeWorld-V2 - OtakuWorld
+# OtakuWorld
 A community built manga tracker, users add manga to grow data.
 
 TO RUN PROJECT
