@@ -19,9 +19,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(cors());
-app.get('*', decodeUser);
-app.patch('*', decodeUser);
-app.post(/^(?!.*?auth).*/, decodeUser, verifyUser);
+app.use(decodeUser);
+app.patch('*', verifyUser);
+app.post(/^(?!.*?auth).*/, verifyUser);
+app.all(/\b($user)\b/i, verifyUser);
 
 // Route handlers
 app.use('/api/auth', auth);

@@ -7,20 +7,19 @@ import './styles/list.css';
 
 import FilterMenu from '../Filter/FilterMenu';
 
-const MangaList = ({ match }) => {
+const UsersManga = ({ match }) => {
   const [state, setState] = useState({
     data: [],
     err: '',
   });
 
-  const getAll = (params = '') => {
-    apiRequest(`/api/manga/${params}`)
+  const getFavorites = (params) => {
+    apiRequest(`/api/user/favorite${params}`)
       .then(async (res) => {
         const data = await res.json();
         if (res.status !== 200) {
           throw data.message;
         }
-
         setState({ ...state, data });
       })
       .catch((err) => {
@@ -37,9 +36,13 @@ const MangaList = ({ match }) => {
 
   const history = useHistory();
 
+  const getData = (params = '') => {
+    getFavorites(params);
+  };
+
   useEffect(() => {
-    getAll();
-  }, [match.path]);
+    getData();
+  }, []);
 
   const moreDetails = (title, id) => {
     history.push(`/manga/${id}/${title.replace(/\s/g, '+')}`);
@@ -47,7 +50,7 @@ const MangaList = ({ match }) => {
 
   const searchParams = () => {
     const search = new URLSearchParams();
-    if (query) search.append('title', query);
+    if (query.length > 0) search.append('title', query);
     if (status.length > 0) search.append('status', status);
     if (type.length > 0) search.append('type', type);
     if (genre.length > 0) genre.forEach(({ value }) => search.append('genre', value));
@@ -57,7 +60,7 @@ const MangaList = ({ match }) => {
       search: `?${search.toString()}`,
     });
 
-    getAll(`?${search.toString()}`);
+    getData(`?${search.toString()}`);
   };
 
   return (
@@ -86,11 +89,11 @@ const MangaList = ({ match }) => {
   );
 };
 
-MangaList.propTypes = {
+UsersManga.propTypes = {
   match: PropTypes.shape({
     params: PropTypes.shape({ id: PropTypes.number }),
     path: PropTypes.string,
   }).isRequired,
 };
 
-export default MangaList;
+export default UsersManga;

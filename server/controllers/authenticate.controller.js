@@ -7,7 +7,7 @@ exports.decodeUser = async (req, res, next) => {
     const decrypt = await jwt.verify(token, process.env.SECRET);
 
     res.locals.user = decrypt;
-  } catch (err) { /* We don't care */ }
+  } catch (err) { /* I don't care */ }
 
   return next();
 };

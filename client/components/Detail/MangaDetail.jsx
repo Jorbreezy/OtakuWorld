@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { PropTypes } from 'prop-types';
 import { AiFillHeart, AiOutlineHeart } from 'react-icons/ai';
-import apiRequest from '../Authentication/apiRequest';
+import apiRequest from '../Utils/apiRequest';
 import Stars from '../Rating/Stars';
 
 import './styles/detail.css';
@@ -31,7 +31,7 @@ const MangaDetail = ({ match }) => {
   const favorite = () => {
     const { id } = state;
 
-    apiRequest('/api/manga/favorite', {
+    apiRequest('/api/user/favorite', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ mangaId: id }),
@@ -45,7 +45,7 @@ const MangaDetail = ({ match }) => {
   const unFavorite = () => {
     const { id } = state;
 
-    apiRequest('/api/manga/unfavorite', {
+    apiRequest('/api/user/unfavorite', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ mangaId: id }),

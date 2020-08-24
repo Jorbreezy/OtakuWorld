@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import Select from 'react-select';
 import CustomStyle from '../selectStyles';
 import './styles/form.css';
-import apiRequest from '../Authentication/apiRequest';
+import apiRequest from '../Utils/apiRequest';
 
 const AddManga = () => {
   const [state, setState] = useState({

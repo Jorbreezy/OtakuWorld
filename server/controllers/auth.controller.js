@@ -10,11 +10,11 @@ exports.login = (req, res, next) => {
     .where({ username })
     .first()
     .then((user) => {
-      if (!user) res.status(406).json({ message: 'User not found!' });
+      if (!user) return res.status(406).json({ message: 'Invalid Username or password' });
 
       return bcrypt.compare(password, user.password)
-        .then(async (result) => {
-          if (!result) return res.status(401).json({ error: 'Invalid Username or password' });
+        .then((result) => {
+          if (!result) return res.status(406).json({ message: 'Invalid Username or password' });
 
           const token = jwt.sign({ id: user.id }, process.env.SECRET);
           res.cookie('token', token, { httpOnly: true });
@@ -37,7 +37,7 @@ exports.register = (req, res, next) => {
 
       return bcrypt.hashSync(password, 10, (err, hashedPassword) => {
         if (err) {
-          return res.status(409).json({ message: 'Error while hashing user\'s password' });
+          return res.status(500).json({ message: 'Error while hashing user\'s password' }); // change message
         }
 
         return knexDb('users')
@@ -49,18 +49,13 @@ exports.register = (req, res, next) => {
 
             return next();
           })
-          .catch(() => res.status(400).json({ message: 'Unexpected Error occured' }));
+          .catch(() => res.status(400).json({ message: 'Unexpected Error occured' })); // change message
       });
     })
-    .catch(() => res.status(400).json({ message: 'Error occured in register' }));
+    .catch(() => res.status(400).json({ message: 'Error occured in register' })); // change message
 };
 
 exports.signOut = (req, res, next) => {
-  try {
-    res.clearCookie('token');
-
-    return next();
-  } catch (err) {
-    return next(err);
-  }
+  res.clearCookie('token');
+  return next();
 };

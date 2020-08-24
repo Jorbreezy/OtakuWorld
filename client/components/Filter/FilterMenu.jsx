@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { PropTypes } from 'prop-types';
 import Select from 'react-select';
-import apiRequest from '../Authentication/apiRequest';
+import apiRequest from '../Utils/apiRequest';
 import CustomStyle from '../selectStyles';
+import debounce from '../Utils/debouncer';
 
 import './styles/filter.css';
 
@@ -14,7 +15,6 @@ const FilterMenu = ({
   searchParam,
 }) => {
   const [state, setState] = useState({
-    query: '',
     genres: [],
     type: ['Manga', 'Webtoon', 'Manhua'],
     status: ['Completed', 'Ongoing'],
@@ -33,6 +33,11 @@ const FilterMenu = ({
     getGenre();
   }, []);
 
+  const onChange = (e) => {
+    setQuery(e.target.value);
+    (debounce(searchParam))();
+  };
+
   const gOptions = state.genres.map(({ genre: value }) => ({ label: value, value }));
   const statusOptions = state.status.map((value) => ({ value, label: value }));
   const typeOptions = state.type.map((value) => ({ value, label: value }));
@@ -43,10 +48,7 @@ const FilterMenu = ({
         <input
           className="search"
           placeholder="Search by Title..."
-          onChange={(e) => {
-            setQuery(e.target.value);
-            setState({ ...state, query: e.target.value.replace(/ /g, '+') });
-          }}
+          onChange={onChange}
         />
       </div>
       <div className="filterItem">

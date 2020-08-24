@@ -1,7 +1,6 @@
-// eslint-disable-next-line arrow-body-style
-exports.seed = (knex) => {
+exports.seed = (knex) => (
   // Deletes ALL existing entries
-  return knex('rating').del()
+  knex('rating').del()
     .then(() => knex('rating')
       .insert([
         {
@@ -40,5 +39,4 @@ exports.seed = (knex) => {
           user_id: 2,
           rating: 3,
         },
-      ]));
-};
+      ])));

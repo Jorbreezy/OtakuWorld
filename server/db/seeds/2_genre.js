@@ -1,7 +1,6 @@
-// eslint-disable-next-line arrow-body-style
-exports.seed = (knex) => {
+exports.seed = (knex) => (
   // Deletes ALL existing entries
-  return knex('genre').del()
+  knex('genre').del()
     .then(() => knex('genre')
       .insert([
         { id: 1, genre: 'Action' },
@@ -20,5 +19,4 @@ exports.seed = (knex) => {
         { id: 14, genre: 'Seinen' },
         { id: 15, genre: 'Sports' },
         { id: 16, genre: 'Tragedy' },
-      ]));
-};
+      ])));

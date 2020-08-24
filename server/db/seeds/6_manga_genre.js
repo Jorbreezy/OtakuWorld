@@ -1,7 +1,6 @@
-// eslint-disable-next-line arrow-body-style
-exports.seed = (knex) => {
+exports.seed = (knex) => (
   // Deletes ALL existing entries
-  return knex('manga_genre').del()
+  knex('manga_genre').del()
     .then(() => knex('manga_genre')
       .insert([
         {
@@ -94,5 +93,4 @@ exports.seed = (knex) => {
           manga_id: 6,
           genre_id: 9,
         },
-      ]));
-};
+      ])));

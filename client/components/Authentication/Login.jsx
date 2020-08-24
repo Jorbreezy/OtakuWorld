@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import apiRequest from './apiRequest';
+import apiRequest from '../Utils/apiRequest';
 import './styles/auth.css';
 
 const Login = () => {

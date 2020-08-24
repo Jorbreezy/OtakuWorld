@@ -7,6 +7,8 @@ exports.getAllByUser = async (req, res, next) => {
 
   const { user } = res.locals;
 
+  if (!user) return res.sendStatus(401);
+
   const mangaQuery = knexDb
     .select('manga.*', 'status.status AS status', 'type.type As type', 'g.genre AS genres', 'user_manga.current_chapter AS current_chapter', 'user_manga.user_id')
     .from('manga')
@@ -54,8 +56,6 @@ exports.getAllByUser = async (req, res, next) => {
   const mangas = await mangaQuery;
 
   res.locals.allManga = mangas.map((manga) => ({ ...manga, genres: manga.genres.split(',') }));
-
-  res.locals.manga = await mangaQuery;
 
   return next();
 };
@@ -123,20 +123,18 @@ exports.addOne = async (req, res, next) => {
       title, description, chapters, author, type, status, thumbnail,
     })
     .returning('id')
-    .then((data) => {
-      const id = data[0];
+    .then(async (data) => {
+      const [id] = data;
 
       const insertGenre = genres.split(',').map((value) => ({ manga_id: id, genre_id: parseInt(value, 10) }));
 
-      knexDb('manga_genre')
+      await knexDb('manga_genre')
         .insert(insertGenre)
-        .then(() => {})
-        .catch((err) => next(err));
+        .catch((err) => { throw err; });
 
-      knexDb('user_manga')
+      await knexDb('user_manga')
         .insert({ manga_id: id, user_id: user.id })
-        .then(() => {})
-        .catch((err) => next(err));
+        .catch((err) => { throw err; });
     })
     .catch((err) => next(err));
 
@@ -206,53 +204,49 @@ exports.getGenre = async (req, res, next) => {
   return next();
 };
 
-exports.favorite = (req, res, next) => {
+exports.favorite = async (req, res, next) => {
   const { mangaId } = req.body;
   const { user } = res.locals;
 
-  knexDb('user_manga')
+  await knexDb('user_manga')
     .insert({ manga_id: mangaId, user_id: user.id })
-    .then(() => {})
-    .catch((err) => next(err));
+    .catch((err) => { throw err; });
 
   return next();
 };
 
-exports.unfavorite = (req, res, next) => {
+exports.unfavorite = async (req, res, next) => {
   const { mangaId } = req.body;
   const { user } = res.locals;
 
-  knexDb('user_manga')
+  await knexDb('user_manga')
     .del()
     .where({ manga_id: mangaId, user_id: user.id })
-    .then(() => {})
-    .catch((err) => next(err));
+    .catch((err) => { throw err; });
 
   return next();
 };
 
-exports.updateChapter = (req, res, next) => {
+exports.updateChapter = async (req, res, next) => {
   const { currentChapter } = req.body;
   const { id } = req.params;
   const { user } = res.locals;
 
-  knexDb('user_manga')
+  await knexDb('user_manga')
     .update('current_chapter', currentChapter)
     .where({ manga_id: id, user_id: user.id })
-    .then(() => {})
-    .catch((err) => next(err));
+    .catch((err) => { throw err; });
 
   return next();
 };
 
-exports.rate = (req, res, next) => {
+exports.rate = async (req, res, next) => {
   const { id, rating } = req.body;
   const { user } = res.locals;
 
-  knexDb('rating')
+  await knexDb('rating')
     .insert({ manga_id: id, user_id: user.id, rating })
-    .then(() => {})
-    .catch((err) => next(err));
+    .catch((err) => { throw err; });
 
   return next();
 };

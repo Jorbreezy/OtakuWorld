@@ -7,7 +7,7 @@ import {
   Link,
   useHistory,
 } from 'react-router-dom';
-import apiRequest from '../Authentication/apiRequest';
+import apiRequest from '../Utils/apiRequest';
 
 const Nav = () => {
   const history = useHistory();
