@@ -1,5 +1,5 @@
 # AnimeWorld-V2 - OtakuWorld
-A manga tracker
+A community built manga tracker, users add manga to grow data.
 
 TO RUN PROJECT
   1. In base directory run "npm install"
