@@ -12,7 +12,8 @@
     "build": "webpack --env.NODE_ENV=production",
     "db:migrate": "npx knex migrate:latest",
     "db:seed": "npx knex seed:run",
-    "db:setup": "concurrently \"npm run db:migrate\" \"npm run db:seed\""
+    "db:setup": "concurrently \"npm run db:migrate\" \"npm run db:seed\"",
+    "db:create": "createdb -T template0 otakuworld"
   },
   "repository": {
     "type": "git",
