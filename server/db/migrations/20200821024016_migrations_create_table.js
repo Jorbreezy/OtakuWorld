@@ -69,11 +69,11 @@ exports.up = (knex) => knex.schema
   });
 
 exports.down = (knex) => knex.schema
-  .dropTable('users')
   .dropTable('manga_genre')
   .dropTable('user_manga')
   .dropTable('genre')
+  .dropTable('rating')
+  .dropTable('manga')
   .dropTable('type')
   .dropTable('status')
-  .dropTable('rating')
-  .dropTable('manga');
+  .dropTable('users');

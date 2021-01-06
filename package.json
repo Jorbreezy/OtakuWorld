@@ -13,7 +13,7 @@
     "db:migrate": "node -r dotenv/config ./node_modules/knex/bin/cli.js migrate:latest",
     "db:rollback": "node -r dotenv/config ./node_modules/knex/bin/cli.js migrate:rollback",
     "db:seed": "node -r dotenv/config ./node_modules/knex/bin/cli.js seed:run",
-    "db:setup": "concurrently \"npm run db:migrate\" \"npm run db:seed\"",
+    "db:setup": "concurrently -m 1 \"npm run db:migrate\" \"npm run db:seed\"",
     "db:create": "createdb -T template0 otakuworld"
   },
   "repository": {
