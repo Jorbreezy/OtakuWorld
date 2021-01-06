@@ -3,7 +3,7 @@ exports.seed = (knex) => (
   knex('type').del()
     .then(() => knex('type')
       .insert([
-        { id: 1, type: 'Manga' },
-        { id: 2, type: 'Webtoon' },
-        { id: 3, type: 'Manhua' },
+        { type: 'Manga' },
+        { type: 'Webtoon' },
+        { type: 'Manhua' },
       ])));

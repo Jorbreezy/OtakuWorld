@@ -5,7 +5,6 @@ exports.seed = (knex) => (
     .then(() => knex('manga')
       .insert([
         {
-          id: 1,
           title: 'Dimensional Mercenary',
           author: 'Keum Ho',
           description: `Would you like to find a job? 
@@ -20,7 +19,6 @@ exports.seed = (knex) => (
           type: 2,
         },
         {
-          id: 2,
           title: 'Panlong',
           author: 'Jia San Shao TANG',
           description: `Linley is a young noble of a declining, once-powerful clan which once dominated the world.
@@ -34,7 +32,6 @@ exports.seed = (knex) => (
           type: 3,
         },
         {
-          id: 3,
           title: 'Tensei Shitara Slime Datta Ken',
           author: 'Fuse',
           description: `The ordinary Minami Satoru found himself dying after being stabbed by a slasher. 
@@ -47,7 +44,6 @@ exports.seed = (knex) => (
           type: 1,
         },
         {
-          id: 4,
           title: 'Maou Gakuin no Futekigousha',
           author: 'Shuu',
           description: `The demon lord of tyranny, Anoth, destroyed humans, spirits, and even gods.
@@ -62,7 +58,6 @@ exports.seed = (knex) => (
           type: 1,
         },
         {
-          id: 5,
           title: 'Solo Leveling',
           author: 'Chugong 추공',
           description: `10 years ago, after “the Gate” that connected the real world with the monster world opened, some of the ordinary, everyday people received the power to hunt monsters within the Gate.
@@ -79,7 +74,6 @@ exports.seed = (knex) => (
           type: 2,
         },
         {
-          id: 6,
           title: 'Tales of Demons and Gods',
           author: 'Fuse',
           description: `Nie Li, the strongest Demon Spiritist in his past life standing at the pinnacle of the martial world. 
